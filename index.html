@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nika Hidrata - Tema Rosa Fofo</title>
+    <title>Hora de se hidratar amor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -222,6 +222,31 @@
             color: #f472b6;
         }
 
+        .weight-input {
+            background: white;
+            border: 2px solid #f9a8d4;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+            font-weight: 500;
+            color: #db2777;
+        }
+
+        .weight-input:focus {
+            outline: none;
+            border-color: #ec4899;
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2);
+        }
+
+        .weight-container {
+            margin-bottom: 1.5rem;
+            animation: fadeIn 0.8s ease forwards;
+            animation-delay: 0.3s;
+            opacity: 0;
+        }
+
         @keyframes move {
             0% {
                 background-position: 0 0;
@@ -278,6 +303,17 @@
             }
         }
 
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         @media (max-width: 480px) {
             .card {
                 padding: 1.5rem;
@@ -298,8 +334,19 @@
 
     <div class="card p-8 text-center">
         <div class="mb-6">
-            <h1 class="text-3xl font-bold text-pink-600 mb-2 animate-pulse">Nika Hidrata 🎀❤️</h1>
-            <p class="text-pink-500">Mantenha-se hidratada com estilo!</p>
+            <h1 class="text-3xl font-bold text-pink-600 mb-2 animate-pulse">Hora de se hidratar amor 🎀❤️</h1>
+            <p class="text-pink-500">Cuide da sua hidratação com carinho!</p>
+        </div>
+
+        <div class="weight-container">
+            <label for="peso" class="block text-pink-700 font-medium mb-2">Informe seu peso (kg)</label>
+            <div class="flex items-center space-x-2">
+                <input type="number" id="peso" placeholder="Ex: 60" class="weight-input" min="30" max="200">
+                <button onclick="calcularMeta()" class="btn px-4 py-3">
+                    <i class="fas fa-calculator"></i>
+                </button>
+            </div>
+            <p class="text-sm text-pink-600 mt-2">Recomendação: 35ml por kg de peso</p>
         </div>
 
         <div class="progress-bar mb-4">
@@ -357,6 +404,7 @@
         const celebration = document.getElementById('celebration');
         const toast = document.getElementById('toast');
         const toastMessage = document.getElementById('toastMessage');
+        const pesoInput = document.getElementById('peso');
         
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
@@ -366,11 +414,14 @@
         
         // Carregar dados do localStorage
         function carregarDados() {
-            const dadosSalvos = localStorage.getItem('nikaHidrata');
+            const dadosSalvos = localStorage.getItem('hidratacaoAmor');
             if (dadosSalvos) {
                 const dados = JSON.parse(dadosSalvos);
                 consumido = dados.consumido || 0;
                 meta = dados.meta || 2000;
+                if (dados.peso) {
+                    pesoInput.value = dados.peso;
+                }
                 document.getElementById('metaDiaria').textContent = meta;
             }
         }
@@ -379,9 +430,30 @@
         function salvarDados() {
             const dados = {
                 consumido: consumido,
-                meta: meta
+                meta: meta,
+                peso: pesoInput.value || ''
             };
-            localStorage.setItem('nikaHidrata', JSON.stringify(dados));
+            localStorage.setItem('hidratacaoAmor', JSON.stringify(dados));
+        }
+        
+        // Calcular meta com base no peso
+        function calcularMeta() {
+            const peso = parseFloat(pesoInput.value);
+            if (isNaN(peso) || peso < 30 || peso > 200) {
+                mostrarToast("Por favor, informe um peso válido entre 30kg e 200kg");
+                pesoInput.focus();
+                return;
+            }
+            
+            // Cálculo: 35ml por kg de peso
+            meta = Math.round(peso * 35 / 50) * 50; // Arredonda para o múltiplo de 50 mais próximo
+            document.getElementById('metaDiaria').textContent = meta;
+            restante = Math.max(0, meta - consumido);
+            restanteElement.textContent = restante;
+            
+            mostrarToast(`Meta atualizada: ${meta}ml por dia! 💖`);
+            atualizarProgresso();
+            salvarDados();
         }
         
         // Atualizar barra de progresso
@@ -460,6 +532,13 @@
         
         // Adicionar água
         function adicionarAgua(qtd) {
+            // Verificar se a meta foi definida
+            if (meta === 0 || !pesoInput.value) {
+                mostrarToast("Informe seu peso primeiro! 💕");
+                pesoInput.focus();
+                return;
+            }
+            
             // Efeito de clique no botão
             const btn = event.currentTarget;
             btn.classList.add('active');
@@ -479,10 +558,10 @@
             if (anterior < meta && consumido >= meta) {
                 setTimeout(() => {
                     celebrar();
-                    mostrarToast("Parabéns Nika! 🎉 Você atingiu sua meta de hidratação!");
+                    mostrarToast("Parabéns amor! 🎉 Você atingiu sua meta de hidratação!");
                 }, 800);
             } else {
-                mostrarToast(`+${qtd}ml adicionados! 💧 Continue assim!`);
+                mostrarToast(`+${qtd}ml adicionados! 💧 Você está cuidando de você!`);
             }
         }
         
@@ -494,6 +573,7 @@
                 document.getElementById('metaDiaria').textContent = meta;
                 atualizarProgresso();
                 mostrarToast(`Meta atualizada para ${meta}ml! 🎯`);
+                salvarDados();
             }
         }
         
@@ -502,7 +582,7 @@
             if (confirm("Deseja reiniciar seu progresso diário?")) {
                 consumido = 0;
                 atualizarProgresso();
-                mostrarToast("Progresso reiniciado! 🌸");
+                mostrarToast("Progresso reiniciado! 🌸 Comece novamente!");
             }
         }
         
@@ -511,6 +591,13 @@
         
         // Adicionar evento de duplo clique no consumo para resetar
         document.getElementById('consumido').addEventListener('dblclick', resetarProgresso);
+        
+        // Permitir enviar o peso pressionando Enter
+        pesoInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calcularMeta();
+            }
+        });
     </script>
 
 </body>
