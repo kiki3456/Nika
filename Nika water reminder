@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nika Hidrata - Tema Rosa Fofo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ffe4e6 0%, #fbcfe8 50%, #f9a8d4 100%);
+            min-height: 100vh;
+        }
+        
+        .card {
+            background: #fff0f6;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 20px rgba(255, 0, 128, 0.15);
+        }
+
+        .btn {
+            background: #ec4899;
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #db2777;
+            transform: scale(1.05);
+        }
+
+        .progress-bar {
+            height: 16px;
+            border-radius: 9999px;
+            background: #ffe4e6;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #f472b6, #ec4899, #db2777);
+            width: 0%;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .emoji {
+            font-size: 1.4rem;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center p-6">
+
+    <div class="card w-full max-w-md p-6 text-center">
+        <h1 class="text-3xl font-bold text-pink-600 mb-2">Nika Hidrata 🎀❤️</h1>
+        <p class="text-pink-500 mb-6">Mantenha-se hidratada com estilo!</p>
+
+        <div class="progress-bar mb-4">
+            <div id="progressFill" class="progress-fill"></div>
+        </div>
+        <p id="progressText" class="text-pink-700 font-medium mb-6">0% da meta atingida</p>
+
+        <button onclick="adicionarAgua(200)" class="btn w-full mb-4">+ 200ml ❤️</button>
+        <button onclick="adicionarAgua(500)" class="btn w-full mb-6">+ 500ml 🎀</button>
+
+        <div class="text-sm text-pink-600">
+            Meta diária: <span id="metaDiaria">2000</span> ml<br>
+            Consumido: <span id="consumido">0</span> ml
+        </div>
+    </div>
+
+    <script>
+        let meta = 2000;
+        let consumido = 0;
+
+        function atualizarProgresso() {
+            let porcentagem = (consumido / meta) * 100;
+            if (porcentagem > 100) porcentagem = 100;
+
+            document.getElementById('progressFill').style.width = porcentagem + '%';
+            document.getElementById('progressText').innerText = Math.round(porcentagem) + "% da meta atingida";
+            document.getElementById('consumido').innerText = consumido;
+        }
+
+        function adicionarAgua(qtd) {
+            consumido += qtd;
+            atualizarProgresso();
+            if (consumido >= meta) {
+                alert("Parabéns Nika 🎀❤️ Você bateu sua meta de hidratação!");
+            } else {
+                alert("Boa, Nika! ❤️ Você adicionou " + qtd + "ml de água!");
+            }
+        }
+
+        atualizarProgresso();
+    </script>
+
+</body>
+</html>
