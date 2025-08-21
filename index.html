@@ -308,6 +308,7 @@
         .profile-header {
             display: flex;
             align-items: center;
+            justify-content: center;
             margin-bottom: 1.5rem;
         }
         
@@ -449,7 +450,7 @@
     <!-- Tela Principal do App -->
     <div id="appScreen" class="screen">
         <div class="card p-6 text-center">
-            <div class="profile-header justify-center mb-4">
+            <div class="profile-header">
                 <img id="profileImage" src="" alt="Sua foto">
                 <h1 class="text-xl font-bold text-pink-600">Olá, <span id="displayName"></span>! ❤️</h1>
             </div>
@@ -619,5 +620,4 @@
         
         // Editar perfil
         function editProfile() {
-            const profile = JSON.parse(localStorage.getItem('hidratacaoAmorProfile'));
-       
+            const profile = JSON.parse(localStorage.getItem('hidratacaoAmorPr
