@@ -26,6 +26,17 @@
             padding: 1rem;
         }
         
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 420px;
+        }
+        
+        .active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
         .card {
             background: rgba(255, 240, 246, 0.95);
             border-radius: 1.5rem;
@@ -33,8 +44,6 @@
             backdrop-filter: blur(10px);
             transform: translateY(0);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            width: 100%;
-            max-width: 420px;
             overflow: hidden;
             opacity: 0;
             animation: cardEntrance 0.8s ease forwards;
@@ -246,6 +255,70 @@
             animation-delay: 0.3s;
             opacity: 0;
         }
+        
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #f9a8d4;
+            margin: 0 auto 1rem;
+            display: block;
+            background-color: #ffe4e6;
+        }
+        
+        .file-input-label {
+            display: block;
+            background: #f472b6;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 1rem;
+        }
+        
+        .file-input-label:hover {
+            background: #ec4899;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .name-input {
+            background: white;
+            border: 2px solid #f9a8d4;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+            font-weight: 500;
+            color: #db2777;
+        }
+        
+        .name-input:focus {
+            outline: none;
+            border-color: #ec4899;
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2);
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .profile-header img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #f9a8d4;
+            margin-right: 1rem;
+        }
 
         @keyframes move {
             0% {
@@ -332,52 +405,106 @@
 </head>
 <body>
 
-    <div class="card p-8 text-center">
-        <div class="mb-6">
-            <h1 class="text-3xl font-bold text-pink-600 mb-2 animate-pulse">Hora de se hidratar amor 🎀❤️</h1>
-            <p class="text-pink-500">Cuide da sua hidratação com carinho!</p>
-        </div>
-
-        <div class="weight-container">
-            <label for="peso" class="block text-pink-700 font-medium mb-2">Informe seu peso (kg)</label>
-            <div class="flex items-center space-x-2">
-                <input type="number" id="peso" placeholder="Ex: 60" class="weight-input" min="30" max="200">
-                <button onclick="calcularMeta()" class="btn px-4 py-3">
-                    <i class="fas fa-calculator"></i>
+    <!-- Tela de Verificação -->
+    <div id="verificationScreen" class="screen active">
+        <div class="card p-8 text-center">
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-pink-600 mb-4">⚠️ Aviso Importante</h1>
+                <p class="text-pink-700 mb-6">Esse app é de uso restrito à mulher mais bonita do mundo. Então se você não é minha namorada, saia imediatamente!</p>
+                
+                <div class="bg-pink-100 p-4 rounded-xl mb-6">
+                    <p class="text-pink-600">Agora que só sobrou você amorzinho, clique no botão abaixo para continuar.</p>
+                </div>
+                
+                <button onclick="showProfileScreen()" class="btn w-full">
+                    <span>Eu sou ela! ❤️</span>
                 </button>
             </div>
-            <p class="text-sm text-pink-600 mt-2">Recomendação: 35ml por kg de peso</p>
         </div>
+    </div>
 
-        <div class="progress-bar mb-4">
-            <div id="progressFill" class="progress-fill"></div>
-            <div id="waterDrops"></div>
-        </div>
-        <p id="progressText" class="text-pink-700 font-medium mb-6">0% da meta atingida</p>
-
-        <div class="grid grid-cols-2 gap-3 mb-6">
-            <button onclick="adicionarAgua(200)" class="btn">
-                <span>+ 200ml</span>
-                <span class="emoji">❤️</span>
-            </button>
-            <button onclick="adicionarAgua(500)" class="btn">
-                <span>+ 500ml</span>
-                <span class="emoji">🎀</span>
-            </button>
-        </div>
-
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-value" id="metaDiaria">2000</div>
-                <div class="stat-label">Meta (ml)</div>
+    <!-- Tela de Perfil -->
+    <div id="profileScreen" class="screen">
+        <div class="card p-8 text-center">
+            <div class="mb-6">
+                <h1 class="text-3xl font-bold text-pink-600 mb-2">Hora de se hidratar amor 🎀❤️</h1>
+                <p class="text-pink-500">Complete seu perfil, linda!</p>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" id="consumido">0</div>
-                <div class="stat-label">Consumido (ml)</div>
+
+            <img id="profilePreview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f9a8d4'%3E%3Cpath d='M12 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm9 11a1 1 0 0 1-2 0v-2a3 3 0 0 0-3-3H8a3 3 0 0 0-3 3v2a1 1 0 0 1-2 0v-2a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v2z'/%3E%3C/svg%3E" class="profile-pic" alt="Preview">
+            
+            <label for="profilePhoto" class="file-input-label">
+                <i class="fas fa-camera mr-2"></i> Escolher foto
+            </label>
+            <input type="file" id="profilePhoto" accept="image/*" class="file-input" onchange="previewImage(this)">
+            
+            <input type="text" id="userName" placeholder="Seu lindo nome" class="name-input">
+            
+            <button onclick="saveProfile()" class="btn w-full">
+                <span>Salvar e Continuar</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Tela Principal do App -->
+    <div id="appScreen" class="screen">
+        <div class="card p-6 text-center">
+            <div class="profile-header justify-center mb-4">
+                <img id="profileImage" src="" alt="Sua foto">
+                <h1 class="text-xl font-bold text-pink-600">Olá, <span id="displayName"></span>! ❤️</h1>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" id="restante">2000</div>
-                <div class="stat-label">Restante (ml)</div>
+
+            <div class="mb-4">
+                <p class="text-pink-500">Mantenha-se hidratada com carinho!</p>
+            </div>
+
+            <div class="weight-container">
+                <label for="peso" class="block text-pink-700 font-medium mb-2">Informe seu peso (kg)</label>
+                <div class="flex items-center space-x-2">
+                    <input type="number" id="peso" placeholder="Ex: 60" class="weight-input" min="30" max="200">
+                    <button onclick="calcularMeta()" class="btn px-4 py-3">
+                        <i class="fas fa-calculator"></i>
+                    </button>
+                </div>
+                <p class="text-sm text-pink-600 mt-2">Recomendação: 35ml por kg de peso</p>
+            </div>
+
+            <div class="progress-bar mb-4">
+                <div id="progressFill" class="progress-fill"></div>
+                <div id="waterDrops"></div>
+            </div>
+            <p id="progressText" class="text-pink-700 font-medium mb-6">0% da meta atingida</p>
+
+            <div class="grid grid-cols-2 gap-3 mb-6">
+                <button onclick="adicionarAgua(200)" class="btn">
+                    <span>+ 200ml</span>
+                    <span class="emoji">❤️</span>
+                </button>
+                <button onclick="adicionarAgua(500)" class="btn">
+                    <span>+ 500ml</span>
+                    <span class="emoji">🎀</span>
+                </button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="metaDiaria">2000</div>
+                    <div class="stat-label">Meta (ml)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="consumido">0</div>
+                    <div class="stat-label">Consumido (ml)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="restante">2000</div>
+                    <div class="stat-label">Restante (ml)</div>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <button onclick="editProfile()" class="text-pink-500 text-sm">
+                    <i class="fas fa-user-edit mr-1"></i> Editar perfil
+                </button>
             </div>
         </div>
     </div>
@@ -405,200 +532,92 @@
         const toast = document.getElementById('toast');
         const toastMessage = document.getElementById('toastMessage');
         const pesoInput = document.getElementById('peso');
+        const verificationScreen = document.getElementById('verificationScreen');
+        const profileScreen = document.getElementById('profileScreen');
+        const appScreen = document.getElementById('appScreen');
+        const profileImage = document.getElementById('profileImage');
+        const displayName = document.getElementById('displayName');
+        const profilePreview = document.getElementById('profilePreview');
+        const userNameInput = document.getElementById('userName');
         
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
+            // Verificar se já existe um perfil salvo
+            const profile = localStorage.getItem('hidratacaoAmorProfile');
+            
+            if (profile) {
+                // Se já tem perfil, pular para o app principal
+                const profileData = JSON.parse(profile);
+                showAppScreen(profileData);
+            } else {
+                // Se não tem perfil, mostrar tela de verificação
+                showScreen(verificationScreen);
+            }
+            
             carregarDados();
             atualizarProgresso();
         });
         
-        // Carregar dados do localStorage
-        function carregarDados() {
-            const dadosSalvos = localStorage.getItem('hidratacaoAmor');
-            if (dadosSalvos) {
-                const dados = JSON.parse(dadosSalvos);
-                consumido = dados.consumido || 0;
-                meta = dados.meta || 2000;
-                if (dados.peso) {
-                    pesoInput.value = dados.peso;
+        // Mostrar uma tela específica
+        function showScreen(screen) {
+            // Esconder todas as telas
+            verificationScreen.classList.remove('active');
+            profileScreen.classList.remove('active');
+            appScreen.classList.remove('active');
+            
+            // Mostrar a tela solicitada
+            screen.classList.add('active');
+        }
+        
+        // Mostrar tela de perfil
+        function showProfileScreen() {
+            showScreen(profileScreen);
+        }
+        
+        // Mostrar tela do app com dados do perfil
+        function showAppScreen(profileData) {
+            displayName.textContent = profileData.name;
+            profileImage.src = profileData.photo;
+            showScreen(appScreen);
+        }
+        
+        // Fazer upload e preview da imagem
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    profilePreview.src = e.target.result;
                 }
-                document.getElementById('metaDiaria').textContent = meta;
+                
+                reader.readAsDataURL(input.files[0]);
             }
         }
         
-        // Salvar dados no localStorage
-        function salvarDados() {
-            const dados = {
-                consumido: consumido,
-                meta: meta,
-                peso: pesoInput.value || ''
+        // Salvar perfil
+        function saveProfile() {
+            const name = userNameInput.value.trim();
+            
+            if (!name) {
+                mostrarToast("Por favor, digite seu nome lindo!");
+                userNameInput.focus();
+                return;
+            }
+            
+            const profileData = {
+                name: name,
+                photo: profilePreview.src
             };
-            localStorage.setItem('hidratacaoAmor', JSON.stringify(dados));
+            
+            // Salvar no localStorage
+            localStorage.setItem('hidratacaoAmorProfile', JSON.stringify(profileData));
+            
+            // Mostrar tela principal do app
+            showAppScreen(profileData);
+            mostrarToast("Perfil salvo com sucesso! 💖");
         }
         
-        // Calcular meta com base no peso
-        function calcularMeta() {
-            const peso = parseFloat(pesoInput.value);
-            if (isNaN(peso) || peso < 30 || peso > 200) {
-                mostrarToast("Por favor, informe um peso válido entre 30kg e 200kg");
-                pesoInput.focus();
-                return;
-            }
-            
-            // Cálculo: 35ml por kg de peso
-            meta = Math.round(peso * 35 / 50) * 50; // Arredonda para o múltiplo de 50 mais próximo
-            document.getElementById('metaDiaria').textContent = meta;
-            restante = Math.max(0, meta - consumido);
-            restanteElement.textContent = restante;
-            
-            mostrarToast(`Meta atualizada: ${meta}ml por dia! 💖`);
-            atualizarProgresso();
-            salvarDados();
-        }
-        
-        // Atualizar barra de progresso
-        function atualizarProgresso() {
-            restante = Math.max(0, meta - consumido);
-            let porcentagem = (consumido / meta) * 100;
-            if (porcentagem > 100) porcentagem = 100;
-            
-            progressFill.style.width = porcentagem + '%';
-            progressText.textContent = Math.round(porcentagem) + "% da meta atingida";
-            consumidoElement.textContent = consumido;
-            restanteElement.textContent = restante;
-            
-            salvarDados();
-        }
-        
-        // Criar efeito de gotas d'água
-        function criarGotas(qtd) {
-            waterDropsContainer.innerHTML = '';
-            const numGotas = Math.min(qtd / 50, 20); // Máximo de 20 gotas
-            
-            for (let i = 0; i < numGotas; i++) {
-                const drop = document.createElement('div');
-                drop.className = 'water-drop';
-                
-                // Posição aleatória
-                const leftPos = Math.random() * 90 + 5; // Entre 5% e 95%
-                const animationDelay = Math.random() * 0.5; // Atraso aleatório
-                
-                drop.style.left = leftPos + '%';
-                drop.style.animation = `drop 1s ease-in ${animationDelay}s forwards`;
-                
-                waterDropsContainer.appendChild(drop);
-                
-                // Remover após a animação
-                setTimeout(() => {
-                    if (waterDropsContainer.contains(drop)) {
-                        waterDropsContainer.removeChild(drop);
-                    }
-                }, 1000 + animationDelay * 1000);
-            }
-        }
-        
-        // Mostrar animação de celebração
-        function celebrar() {
-            celebration.innerHTML = '';
-            celebration.style.opacity = '1';
-            
-            // Criar confetes
-            for (let i = 0; i < 100; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
-                confetti.style.animation = `confettiFall ${Math.random() * 3 + 2}s linear forwards`;
-                confetti.style.animationDelay = Math.random() * 2 + 's';
-                
-                celebration.appendChild(confetti);
-            }
-            
-            // Esconder após animação
-            setTimeout(() => {
-                celebration.style.opacity = '0';
-            }, 5000);
-        }
-        
-        // Mostrar toast de notificação
-        function mostrarToast(mensagem) {
-            toastMessage.textContent = mensagem;
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-        
-        // Adicionar água
-        function adicionarAgua(qtd) {
-            // Verificar se a meta foi definida
-            if (meta === 0 || !pesoInput.value) {
-                mostrarToast("Informe seu peso primeiro! 💕");
-                pesoInput.focus();
-                return;
-            }
-            
-            // Efeito de clique no botão
-            const btn = event.currentTarget;
-            btn.classList.add('active');
-            setTimeout(() => btn.classList.remove('active'), 300);
-            
-            // Adicionar água
-            const anterior = consumido;
-            consumido += qtd;
-            
-            // Criar animação de gotas
-            criarGotas(qtd);
-            
-            // Atualizar interface
-            atualizarProgresso();
-            
-            // Feedback visual
-            if (anterior < meta && consumido >= meta) {
-                setTimeout(() => {
-                    celebrar();
-                    mostrarToast("Parabéns amor! 🎉 Você atingiu sua meta de hidratação!");
-                }, 800);
-            } else {
-                mostrarToast(`+${qtd}ml adicionados! 💧 Você está cuidando de você!`);
-            }
-        }
-        
-        // Permitir que o usuário ajuste a meta
-        function ajustarMeta() {
-            const novaMeta = prompt("Digite sua nova meta de hidratação em ml:", meta);
-            if (novaMeta && !isNaN(novaMeta) && novaMeta > 0) {
-                meta = parseInt(novaMeta);
-                document.getElementById('metaDiaria').textContent = meta;
-                atualizarProgresso();
-                mostrarToast(`Meta atualizada para ${meta}ml! 🎯`);
-                salvarDados();
-            }
-        }
-        
-        // Adicionar botão de redefinir (opcional)
-        function resetarProgresso() {
-            if (confirm("Deseja reiniciar seu progresso diário?")) {
-                consumido = 0;
-                atualizarProgresso();
-                mostrarToast("Progresso reiniciado! 🌸 Comece novamente!");
-            }
-        }
-        
-        // Adicionar evento de duplo clique na meta para editar
-        document.getElementById('metaDiaria').addEventListener('dblclick', ajustarMeta);
-        
-        // Adicionar evento de duplo clique no consumo para resetar
-        document.getElementById('consumido').addEventListener('dblclick', resetarProgresso);
-        
-        // Permitir enviar o peso pressionando Enter
-        pesoInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                calcularMeta();
-            }
-        });
-    </script>
-
-</body>
-</html>
+        // Editar perfil
+        function editProfile() {
+            const profile = JSON.parse(localStorage.getItem('hidratacaoAmorProfile'));
+       
