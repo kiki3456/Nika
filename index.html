@@ -1,597 +1,233 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hora de se hidratar amor</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #ffe4e6 0%, #fbcfe8 50%, #f9a8d4 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-        
-        .screen {
-            display: none;
-            width: 100%;
-            max-width: 420px;
-        }
-        
-        .active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .card {
-            background: rgba(255, 240, 246, 0.95);
-            border-radius: 1.5rem;
-            box-shadow: 0 10px 30px rgba(255, 0, 128, 0.2);
-            backdrop-filter: blur(10px);
-            transform: translateY(0);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            overflow: hidden;
-            animation: cardEntrance 0.8s ease forwards;
-        }
-
-        .btn {
-            background: linear-gradient(to right, #f472b6, #ec4899);
-            color: white;
-            font-weight: 600;
-            padding: 0.85rem 1.5rem;
-            border-radius: 9999px;
-            transition: all 0.3s;
-            box-shadow: 0 4px 10px rgba(236, 72, 153, 0.3);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn:hover {
-            background: linear-gradient(to right, #ec4899, #db2777);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(236, 72, 153, 0.4);
-        }
-
-        .progress-bar {
-            height: 22px;
-            border-radius: 9999px;
-            background: #ffe4e6;
-            overflow: hidden;
-            position: relative;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(to right, #f472b6, #ec4899, #db2777);
-            width: 0%;
-            transition: width 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
-            border-radius: 9999px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background-image: linear-gradient(
-                -45deg,
-                rgba(255, 255, 255, 0.2) 25%,
-                transparent 25%,
-                transparent 50%,
-                rgba(255, 255, 255, 0.2) 50%,
-                rgba(255, 255, 255, 0.2) 75%,
-                transparent 75%,
-                transparent
-            );
-            z-index: 1;
-            background-size: 20px 20px;
-            animation: move 1s linear infinite;
-            border-radius: 9999px;
-        }
-
-        .water-drop {
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f472b6'%3E%3Cpath d='M12 2.69l5.66 5.66a8 8 0 11-11.31 0z'/%3E%3C/svg%3E") no-repeat center;
-            background-size: contain;
-            opacity: 0;
-            z-index: 2;
-        }
-
-        .emoji {
-            font-size: 1.4rem;
-            transition: transform 0.3s ease;
-        }
-
-        .btn:hover .emoji {
-            transform: scale(1.2);
-        }
-
-        .celebration {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            opacity: 0;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: rgba(255, 255, 255, 0.95);
-            padding: 12px 20px;
-            border-radius: 50px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 1001;
-            opacity: 0;
-            transition: all 0.4s ease;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 1rem;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: #db2777;
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: #f472b6;
-        }
-
-        .weight-input, .name-input {
-            background: white;
-            border: 2px solid #f9a8d4;
-            border-radius: 12px;
-            padding: 0.75rem 1rem;
-            width: 100%;
-            margin-bottom: 1rem;
-            transition: all 0.3s;
-            font-weight: 500;
-            color: #db2777;
-        }
-
-        .weight-input:focus, .name-input:focus {
-            outline: none;
-            border-color: #ec4899;
-            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2);
-        }
-
-        .weight-container {
-            margin-bottom: 1.5rem;
-        }
-        
-        .profile-pic {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #f9a8d4;
-            margin: 0 auto 1rem;
-            display: block;
-            background-color: #ffe4e6;
-        }
-        
-        .file-input-label {
-            display: block;
-            background: #f472b6;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 9999px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 1rem;
-        }
-        
-        .file-input-label:hover {
-            background: #ec4899;
-        }
-        
-        .file-input {
-            display: none;
-        }
-        
-        .profile-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .profile-header img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #f9a8d4;
-            margin-right: 1rem;
-        }
-
-        @keyframes move {
-            0% {
-                background-position: 0 0;
-            }
-            100% {
-                background-position: 20px 20px;
-            }
-        }
-
-        @keyframes cardEntrance {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        @keyframes drop {
-            0% {
-                transform: translateY(-10px) scale(0.8);
-                opacity: 0;
-            }
-            50% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(30px) scale(1);
-                opacity: 0;
-            }
-        }
-
-        @keyframes confettiFall {
-            0% {
-                transform: translateY(-100px) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .card {
-                padding: 1.5rem;
-            }
-            
-            .btn {
-                padding: 0.75rem 1.25rem;
-            }
-            
-            .stats {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💖 Cute Water Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(to bottom right, #ffe4f1, #e0f7ff);
+      min-height: 100vh;
+    }
+    .card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 2rem;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      max-width: 400px;
+      margin: auto;
+    }
+    .btn {
+      background: #ff69b4;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      font-weight: bold;
+      transition: transform 0.2s;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+      background: #ff1493;
+    }
+    .progress-bar {
+      background: #ffe4f1;
+      border-radius: 9999px;
+      overflow: hidden;
+      height: 20px;
+    }
+    .progress-fill {
+      background: linear-gradient(to right, #ff69b4, #87cefa);
+      height: 100%;
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+    .water-drop {
+      width: 40px;
+      height: 40px;
+      fill: #00bfff;
+    }
+    .hidden { display: none; }
+  </style>
 </head>
-<body>
-
+<body class="flex items-center justify-center p-4">
+  <div id="app" class="card">
     <!-- Tela de Verificação -->
-    <div id="verificationScreen" class="screen active">
-        <div class="card p-8 text-center">
-            <div class="mb-6">
-                <h1 class="text-2xl font-bold text-pink-600 mb-4">⚠️ Aviso Importante</h1>
-                <p class="text-pink-700 mb-6">Esse app é de uso restrito à mulher mais bonita do mundo. Então se você não é minha namorada, saia imediatamente!</p>
-                
-                <div class="bg-pink-100 p-4 rounded-xl mb-6">
-                    <p class="text-pink-600">Agora que só sobrou você amorzinho, clique no botão abaixo para continuar.</p>
-                </div>
-                
-                <button id="verificationBtn" class="btn w-full">
-                    <span>Eu sou ela! ❤️</span>
-                </button>
-            </div>
-        </div>
+    <div id="verificationScreen" class="">
+      <h1 class="text-2xl mb-4 text-center">🌸 Bem-vinda ao Cute Water Tracker 💧</h1>
+      <p class="text-center mb-6">Clique para começar sua jornada fofinha de hidratação!</p>
+      <button id="verifyBtn" class="btn w-full">Começar 💕</button>
     </div>
 
     <!-- Tela de Perfil -->
-    <div id="profileScreen" class="screen">
-        <div class="card p-8 text-center">
-            <div class="mb-6">
-                <h1 class="text-3xl font-bold text-pink-600 mb-2">Hora de se hidratar amor 🎀❤️</h1>
-                <p class="text-pink-500">Complete seu perfil, linda!</p>
-            </div>
-
-            <img id="profilePreview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f9a8d4'%3E%3Cpath d='M12 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm9 11a1 1 0 0 1-2 0v-2a3 3 0 0 0-3-3H8a3 3 0 0 0-3 3v2a1 1 0 0 1-2 0v-2a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v2z'/%3E%3C/svg%3E" class="profile-pic" alt="Preview">
-            
-            <label for="profilePhoto" class="file-input-label">
-                <i class="fas fa-camera mr-2"></i> Escolher foto
-            </label>
-            <input type="file" id="profilePhoto" accept="image/*" class="file-input">
-            
-            <input type="text" id="userName" placeholder="Seu lindo nome" class="name-input">
-            
-            <button id="saveProfileBtn" class="btn w-full">
-                <span>Salvar e Continuar</span>
-            </button>
-        </div>
+    <div id="profileScreen" class="hidden">
+      <h2 class="text-xl mb-4 text-center">👩 Personalize seu perfil</h2>
+      <input type="text" id="profileName" placeholder="Seu nome" class="w-full p-2 mb-3 border rounded-lg">
+      <input type="number" id="weightInput" placeholder="Seu peso (kg)" class="w-full p-2 mb-3 border rounded-lg">
+      <input type="file" id="profileImage" accept="image/*" class="w-full mb-3">
+      <img id="profilePreview" class="hidden rounded-full w-24 h-24 object-cover mx-auto mb-4">
+      <button id="saveProfileBtn" class="btn w-full">Salvar Perfil 🌟</button>
     </div>
 
-    <!-- Tela Principal do App -->
-    <div id="appScreen" class="screen">
-        <div class="card p-6 text-center">
-            <div class="profile-header">
-                <img id="profileImage" src="" alt="Sua foto">
-                <h1 class="text-xl font-bold text-pink-600">Olá, <span id="displayName"></span>! ❤️</h1>
-            </div>
-
-            <div class="mb-4">
-                <p class="text-pink-500">Mantenha-se hidratada com carinho!</p>
-            </div>
-
-            <div class="weight-container">
-                <label for="peso" class="block text-pink-700 font-medium mb-2">Informe seu peso (kg)</label>
-                <div class="flex items-center space-x-2">
-                    <input type="number" id="peso" placeholder="Ex: 60" class="weight-input" min="30" max="200">
-                    <button id="calculateBtn" class="btn px-4 py-3">
-                        <i class="fas fa-calculator"></i>
-                    </button>
-                </div>
-                <p class="text-sm text-pink-600 mt-2">Recomendação: 35ml por kg de peso</p>
-            </div>
-
-            <div class="progress-bar mb-4">
-                <div id="progressFill" class="progress-fill"></div>
-                <div id="waterDrops"></div>
-            </div>
-            <p id="progressText" class="text-pink-700 font-medium mb-6">0% da meta atingida</p>
-
-            <div class="grid grid-cols-2 gap-3 mb-6">
-                <button id="add200ml" class="btn">
-                    <span>+ 200ml</span>
-                    <span class="emoji">❤️</span>
-                </button>
-                <button id="add500ml" class="btn">
-                    <span>+ 500ml</span>
-                    <span class="emoji">🎀</span>
-                </button>
-            </div>
-
-            <div class="stats">
-                <div class="stat-item">
-                    <div class="stat-value" id="metaDiaria">2000</div>
-                    <div class="stat-label">Meta (ml)</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="consumido">0</div>
-                    <div class="stat-label">Consumido (ml)</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="restante">2000</div>
-                    <div class="stat-label">Restante (ml)</div>
-                </div>
-            </div>
-            
-            <div class="mt-4">
-                <button id="editProfileBtn" class="text-pink-500 text-sm">
-                    <i class="fas fa-user-edit mr-1"></i> Editar perfil
-                </button>
-            </div>
-        </div>
+    <!-- Tela Principal -->
+    <div id="appScreen" class="hidden">
+      <div class="text-center mb-6">
+        <h2 class="text-xl font-bold">💧 Sua meta diária</h2>
+        <p id="goalDisplay" class="text-lg">Meta: -- ml</p>
+      </div>
+      <div class="progress-bar mb-4">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <div class="flex justify-around mb-6">
+        <button id="add200ml" class="btn">+200ml 🥤</button>
+        <button id="add500ml" class="btn">+500ml 💦</button>
+      </div>
+      <div class="text-center">
+        <p id="stats" class="text-lg">Você bebeu: 0ml</p>
+      </div>
+      <div class="mt-6 flex justify-center">
+        <button id="resetDay" class="btn bg-blue-400 hover:bg-blue-600">🔄 Resetar Dia</button>
+      </div>
     </div>
+  </div>
 
-    <div id="celebration" class="celebration"></div>
+  <script>
+    // ====================
+    // CÓDIGO ORIGINAL
+    // ====================
+    document.addEventListener('DOMContentLoaded', () => {
+      const verificationScreen = document.getElementById('verificationScreen');
+      const profileScreen = document.getElementById('profileScreen');
+      const appScreen = document.getElementById('appScreen');
+      const verifyBtn = document.getElementById('verifyBtn');
+      const saveProfileBtn = document.getElementById('saveProfileBtn');
+      const weightInput = document.getElementById('weightInput');
+      const goalDisplay = document.getElementById('goalDisplay');
+      const progressFill = document.getElementById('progressFill');
+      const add200ml = document.getElementById('add200ml');
+      const add500ml = document.getElementById('add500ml');
+      const stats = document.getElementById('stats');
+      const profileName = document.getElementById('profileName');
+      const profileImage = document.getElementById('profileImage');
+      const profilePreview = document.getElementById('profilePreview');
+      const resetDayBtn = document.getElementById('resetDay');
 
-    <div id="toast" class="toast">
-        <i class="fas fa-check-circle text-pink-500"></i>
-        <span id="toastMessage"></span>
-    </div>
+      let goal = 2000;
+      let consumido = 0;
 
-    <script>
-        // Variáveis globais
-        let meta = 2000;
-        let consumido = 0;
-        let restante = meta;
-        
-        // Elementos do DOM
-        const progressFill = document.getElementById('progressFill');
-        const progressText = document.getElementById('progressText');
-        const consumidoElement = document.getElementById('consumido');
-        const restanteElement = document.getElementById('restante');
-        const waterDropsContainer = document.getElementById('waterDrops');
-        const celebration = document.getElementById('celebration');
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toastMessage');
-        const pesoInput = document.getElementById('peso');
-        const verificationScreen = document.getElementById('verificationScreen');
-        const profileScreen = document.getElementById('profileScreen');
-        const appScreen = document.getElementById('appScreen');
-        const profileImage = document.getElementById('profileImage');
-        const displayName = document.getElementById('displayName');
-        const profilePreview = document.getElementById('profilePreview');
-        const userNameInput = document.getElementById('userName');
-        const profilePhotoInput = document.getElementById('profilePhoto');
-        
-        // Inicialização
-        document.addEventListener('DOMContentLoaded', function() {
-            // Configurar event listeners
-            document.getElementById('verificationBtn').addEventListener('click', showProfileScreen);
-            document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
-            document.getElementById('calculateBtn').addEventListener('click', calcularMeta);
-            document.getElementById('add200ml').addEventListener('click', () => adicionarAgua(200));
-            document.getElementById('add500ml').addEventListener('click', () => adicionarAgua(500));
-            document.getElementById('editProfileBtn').addEventListener('click', editProfile);
-            profilePhotoInput.addEventListener('change', previewImage);
-            pesoInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') calcularMeta();
-            });
-            
-            // Verificar se já existe um perfil salvo
-            const profile = localStorage.getItem('hidratacaoAmorProfile');
-            
-            if (profile) {
-                // Se já tem perfil, pular para o app principal
-                const profileData = JSON.parse(profile);
-                showAppScreen(profileData);
-            } else {
-                // Se não tem perfil, mostrar tela de verificação
-                showScreen(verificationScreen);
-            }
-            
-            carregarDados();
-            atualizarProgresso();
-        });
-        
-        // Mostrar uma tela específica
-        function showScreen(screen) {
-            // Esconder todas as telas
-            verificationScreen.classList.remove('active');
-            profileScreen.classList.remove('active');
-            appScreen.classList.remove('active');
-            
-            // Mostrar a tela solicitada
-            screen.classList.add('active');
+      verifyBtn.addEventListener('click', () => {
+        verificationScreen.classList.add('hidden');
+        profileScreen.classList.remove('hidden');
+      });
+
+      profileImage.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            profilePreview.src = ev.target.result;
+            profilePreview.classList.remove('hidden');
+          };
+          reader.readAsDataURL(file);
         }
-        
-        // Mostrar tela de perfil
-        function showProfileScreen() {
-            showScreen(profileScreen);
+      });
+
+      saveProfileBtn.addEventListener('click', () => {
+        const name = profileName.value.trim();
+        const weight = parseFloat(weightInput.value);
+        if (!name || isNaN(weight)) {
+          alert("Por favor, preencha seu nome e peso.");
+          return;
         }
-        
-        // Mostrar tela do app com dados do perfil
-        function showAppScreen(profileData) {
-            displayName.textContent = profileData.name;
-            profileImage.src = profileData.photo;
-            showScreen(appScreen);
+        goal = Math.round(weight * 35);
+        goalDisplay.textContent = `Meta: ${goal}ml`;
+        profileScreen.classList.add('hidden');
+        appScreen.classList.remove('hidden');
+      });
+
+      function atualizarProgresso() {
+        const percentage = Math.min((consumido / goal) * 100, 100);
+        progressFill.style.width = percentage + "%";
+        stats.textContent = `${consumido}ml / ${goal}ml`;
+        if (consumido >= goal) {
+          confetti();
+          mostrarToast("🎉 Parabéns! Você bateu sua meta de água!");
         }
-        
-        // Fazer upload e preview da imagem
-        function previewImage() {
-            if (profilePhotoInput.files && profilePhotoInput.files[0]) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    profilePreview.src = e.target.result;
-                }
-                
-                reader.readAsDataURL(profilePhotoInput.files[0]);
-            }
+      }
+
+      function adicionarAgua(qtd) {
+        consumido += qtd;
+        atualizarProgresso();
+      }
+
+      add200ml.addEventListener('click', () => adicionarAgua(200));
+      add500ml.addEventListener('click', () => adicionarAgua(500));
+      resetDayBtn.addEventListener('click', () => {
+        consumido = 0;
+        atualizarProgresso();
+      });
+
+      function mostrarToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'fixed bottom-4 right-4 bg-pink-600 text-white px-4 py-2 rounded-lg shadow-lg animate-bounce';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+      }
+
+      // ====================
+      // 🚀 MELHORIAS ADICIONADAS
+      // ====================
+      const hoje = new Date().toLocaleDateString("pt-BR");
+
+      function carregarHistorico() {
+        let historico = JSON.parse(localStorage.getItem("historicoHidratacao")) || {};
+        if (!historico[hoje]) historico[hoje] = 0;
+        return historico;
+      }
+
+      function salvarHistorico() {
+        let historico = carregarHistorico();
+        historico[hoje] = consumido;
+        localStorage.setItem("historicoHidratacao", JSON.stringify(historico));
+      }
+
+      function mostrarResumoSemana() {
+        let historico = carregarHistorico();
+        let dias = Object.keys(historico).slice(-7);
+        let resumo = dias.map(d => `${d}: ${historico[d]}ml`).join("\n");
+        let melhorDia = dias.reduce((max, d) => historico[d] > historico[max] ? d : max, dias[0]);
+        alert("📅 Resumo da Semana:\n\n" + resumo + "\n\n🏆 Melhor dia: " + melhorDia + " (" + historico[melhorDia] + "ml)");
+      }
+
+      const resumoBtn = document.createElement("button");
+      resumoBtn.textContent = "📊 Resumo da Semana";
+      resumoBtn.className = "btn w-full mt-4";
+      resumoBtn.onclick = mostrarResumoSemana;
+      document.querySelector("#appScreen .card, #appScreen").appendChild(resumoBtn);
+
+      const atualizarProgressoOriginal = atualizarProgresso;
+      atualizarProgresso = function() {
+        atualizarProgressoOriginal();
+        salvarHistorico();
+      };
+
+      let ultimoConsumo = Date.now();
+      setInterval(() => {
+        let agora = Date.now();
+        if (agora - ultimoConsumo > 60 * 60 * 1000) {
+          mostrarToast("💧 Já faz um tempinho... hora de beber água, amor!");
         }
-        
-        // Salvar perfil
-        function saveProfile() {
-            const name = userNameInput.value.trim();
-            
-            if (!name) {
-                mostrarToast("Por favor, digite seu nome lindo!");
-                userNameInput.focus();
-                return;
-            }
-            
-            const profileData = {
-                name: name,
-                photo: profilePreview.src
-            };
-            
-            // Salvar no localStorage
-            localStorage.setItem('hidratacaoAmorProfile', JSON.stringify(profileData));
-            
-            // Mostrar tela principal do app
-            showAppScreen(profileData);
-            mostrarToast("Perfil salvo com sucesso! 💖");
-        }
-        
-        // Editar perfil
-        function editProfile() {
-            const profile = JSON.parse(localStorage.getItem('hidratacaoAmorProfile'));
-            
-            if (profile) {
-                profilePreview.src = profile.photo;
-                userNameInput.value = profile.name;
-            }
-            
-            showScreen(profileScreen);
-        }
-        
-        // Carregar dados do localStorage
-        function carregarDados() {
-            const dadosSalvos = localStorage.getItem('hidratacaoAmor');
-            if (dadosSalvos) {
-                const dados = JSON.parse(dadosSalvos);
-                consumido = dados.consumido || 0;
-                meta = dados.meta || 2000;
-                if (dados.peso) {
-                    pesoInput.value = dados.peso;
-                }
-                document.getElementById('metaDiaria').textContent = meta;
-            }
-        }
-        
-        // Salvar dados no localStorage
-        function salvarDados() {
-            const dados = {
-      
+      }, 5 * 60 * 1000);
+
+      const adicionarAguaOriginal = adicionarAgua;
+      adicionarAgua = function(qtd) {
+        adicionarAguaOriginal(qtd);
+        ultimoConsumo = Date.now();
+      };
+    });
+  </script>
+</body>
+</html>
