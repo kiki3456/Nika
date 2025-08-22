@@ -11,6 +11,7 @@
       font-family: 'Comic Sans MS', cursive, sans-serif;
       background: linear-gradient(to bottom right, #ffe4f1, #e0f7ff);
       min-height: 100vh;
+      font-size: 20px; /* Fonte maior e visível */
     }
     .card {
       background: white;
@@ -27,6 +28,7 @@
       border-radius: 9999px;
       font-weight: bold;
       transition: transform 0.2s;
+      font-size: 18px;
     }
     .btn:hover {
       transform: scale(1.05);
@@ -36,7 +38,7 @@
       background: #ffe4f1;
       border-radius: 9999px;
       overflow: hidden;
-      height: 20px;
+      height: 24px;
     }
     .progress-fill {
       background: linear-gradient(to right, #ff69b4, #87cefa);
@@ -57,15 +59,15 @@
     <!-- Tela de Verificação -->
     <div id="verificationScreen" class="">
       <h1 class="text-2xl mb-4 text-center">🌸 Bem-vinda ao Cute Water Tracker 💧</h1>
-      <p class="text-center mb-6">Clique para começar sua jornada fofinha de hidratação!</p>
+      <p class="text-center mb-4 font-bold">Esse app é reservado a garota mais bonita do mundo então se você não é ela vaza 🚪</p>
+      <p class="text-center mb-6">Agora que só sobrou você amorzinho, coloque seu peso 💕</p>
       <button id="verifyBtn" class="btn w-full">Começar 💕</button>
     </div>
 
     <!-- Tela de Perfil -->
     <div id="profileScreen" class="hidden">
-      <h2 class="text-xl mb-4 text-center">👩 Personalize seu perfil</h2>
-      <input type="text" id="profileName" placeholder="Seu nome" class="w-full p-2 mb-3 border rounded-lg">
-      <input type="number" id="weightInput" placeholder="Seu peso (kg)" class="w-full p-2 mb-3 border rounded-lg">
+      <h2 class="text-xl mb-4 text-center">👩 Perfil da Nika ❤️</h2>
+      <input type="number" id="weightInput" placeholder="Seu peso (kg)" class="w-full p-3 mb-3 border rounded-lg text-lg">
       <input type="file" id="profileImage" accept="image/*" class="w-full mb-3">
       <img id="profilePreview" class="hidden rounded-full w-24 h-24 object-cover mx-auto mb-4">
       <button id="saveProfileBtn" class="btn w-full">Salvar Perfil 🌟</button>
@@ -76,6 +78,7 @@
       <div class="text-center mb-6">
         <h2 class="text-xl font-bold">💧 Sua meta diária</h2>
         <p id="goalDisplay" class="text-lg">Meta: -- ml</p>
+        <p class="mt-2 font-bold text-pink-600">👑 Nika ❤️</p>
       </div>
       <div class="progress-bar mb-4">
         <div id="progressFill" class="progress-fill"></div>
@@ -95,7 +98,7 @@
 
   <script>
     // ====================
-    // CÓDIGO ORIGINAL
+    // CÓDIGO PRINCIPAL
     // ====================
     document.addEventListener('DOMContentLoaded', () => {
       const verificationScreen = document.getElementById('verificationScreen');
@@ -109,7 +112,6 @@
       const add200ml = document.getElementById('add200ml');
       const add500ml = document.getElementById('add500ml');
       const stats = document.getElementById('stats');
-      const profileName = document.getElementById('profileName');
       const profileImage = document.getElementById('profileImage');
       const profilePreview = document.getElementById('profilePreview');
       const resetDayBtn = document.getElementById('resetDay');
@@ -135,10 +137,9 @@
       });
 
       saveProfileBtn.addEventListener('click', () => {
-        const name = profileName.value.trim();
         const weight = parseFloat(weightInput.value);
-        if (!name || isNaN(weight)) {
-          alert("Por favor, preencha seu nome e peso.");
+        if (isNaN(weight)) {
+          alert("Por favor, preencha seu peso.");
           return;
         }
         goal = Math.round(weight * 35);
@@ -178,7 +179,7 @@
       }
 
       // ====================
-      // 🚀 MELHORIAS ADICIONADAS
+      // 🚀 MELHORIAS (mantidas)
       // ====================
       const hoje = new Date().toLocaleDateString("pt-BR");
 
@@ -206,7 +207,7 @@
       resumoBtn.textContent = "📊 Resumo da Semana";
       resumoBtn.className = "btn w-full mt-4";
       resumoBtn.onclick = mostrarResumoSemana;
-      document.querySelector("#appScreen .card, #appScreen").appendChild(resumoBtn);
+      document.querySelector("#appScreen").appendChild(resumoBtn);
 
       const atualizarProgressoOriginal = atualizarProgresso;
       atualizarProgresso = function() {
