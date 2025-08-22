@@ -45,13 +45,7 @@
             transform: translateY(0);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             overflow: hidden;
-            opacity: 0;
             animation: cardEntrance 0.8s ease forwards;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(255, 0, 128, 0.25);
         }
 
         .btn {
@@ -64,41 +58,16 @@
             box-shadow: 0 4px 10px rgba(236, 72, 153, 0.3);
             border: none;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
         }
 
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.5);
-            opacity: 0;
-            border-radius: 100%;
-            transform: scale(1, 1) translate(-50%);
-            transform-origin: 50% 50%;
-        }
-
         .btn:hover {
             background: linear-gradient(to right, #ec4899, #db2777);
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(236, 72, 153, 0.4);
-        }
-
-        .btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 2px 5px rgba(236, 72, 153, 0.3);
-        }
-
-        .btn:active::after {
-            animation: ripple 1s ease-out;
         }
 
         .progress-bar {
@@ -140,7 +109,6 @@
             z-index: 1;
             background-size: 20px 20px;
             animation: move 1s linear infinite;
-            overflow: hidden;
             border-radius: 9999px;
         }
 
@@ -231,7 +199,7 @@
             color: #f472b6;
         }
 
-        .weight-input {
+        .weight-input, .name-input {
             background: white;
             border: 2px solid #f9a8d4;
             border-radius: 12px;
@@ -243,7 +211,7 @@
             color: #db2777;
         }
 
-        .weight-input:focus {
+        .weight-input:focus, .name-input:focus {
             outline: none;
             border-color: #ec4899;
             box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2);
@@ -251,9 +219,6 @@
 
         .weight-container {
             margin-bottom: 1.5rem;
-            animation: fadeIn 0.8s ease forwards;
-            animation-delay: 0.3s;
-            opacity: 0;
         }
         
         .profile-pic {
@@ -287,24 +252,6 @@
             display: none;
         }
         
-        .name-input {
-            background: white;
-            border: 2px solid #f9a8d4;
-            border-radius: 12px;
-            padding: 0.75rem 1rem;
-            width: 100%;
-            margin-bottom: 1rem;
-            transition: all 0.3s;
-            font-weight: 500;
-            color: #db2777;
-        }
-        
-        .name-input:focus {
-            outline: none;
-            border-color: #ec4899;
-            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2);
-        }
-        
         .profile-header {
             display: flex;
             align-items: center;
@@ -327,17 +274,6 @@
             }
             100% {
                 background-position: 20px 20px;
-            }
-        }
-
-        @keyframes ripple {
-            0% {
-                transform: scale(0, 0);
-                opacity: 0.5;
-            }
-            100% {
-                transform: scale(20, 20);
-                opacity: 0;
             }
         }
 
@@ -380,11 +316,9 @@
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(10px);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
             }
         }
 
@@ -417,7 +351,7 @@
                     <p class="text-pink-600">Agora que só sobrou você amorzinho, clique no botão abaixo para continuar.</p>
                 </div>
                 
-                <button onclick="showProfileScreen()" class="btn w-full">
+                <button id="verificationBtn" class="btn w-full">
                     <span>Eu sou ela! ❤️</span>
                 </button>
             </div>
@@ -437,11 +371,11 @@
             <label for="profilePhoto" class="file-input-label">
                 <i class="fas fa-camera mr-2"></i> Escolher foto
             </label>
-            <input type="file" id="profilePhoto" accept="image/*" class="file-input" onchange="previewImage(this)">
+            <input type="file" id="profilePhoto" accept="image/*" class="file-input">
             
             <input type="text" id="userName" placeholder="Seu lindo nome" class="name-input">
             
-            <button onclick="saveProfile()" class="btn w-full">
+            <button id="saveProfileBtn" class="btn w-full">
                 <span>Salvar e Continuar</span>
             </button>
         </div>
@@ -463,7 +397,7 @@
                 <label for="peso" class="block text-pink-700 font-medium mb-2">Informe seu peso (kg)</label>
                 <div class="flex items-center space-x-2">
                     <input type="number" id="peso" placeholder="Ex: 60" class="weight-input" min="30" max="200">
-                    <button onclick="calcularMeta()" class="btn px-4 py-3">
+                    <button id="calculateBtn" class="btn px-4 py-3">
                         <i class="fas fa-calculator"></i>
                     </button>
                 </div>
@@ -477,11 +411,11 @@
             <p id="progressText" class="text-pink-700 font-medium mb-6">0% da meta atingida</p>
 
             <div class="grid grid-cols-2 gap-3 mb-6">
-                <button onclick="adicionarAgua(200)" class="btn">
+                <button id="add200ml" class="btn">
                     <span>+ 200ml</span>
                     <span class="emoji">❤️</span>
                 </button>
-                <button onclick="adicionarAgua(500)" class="btn">
+                <button id="add500ml" class="btn">
                     <span>+ 500ml</span>
                     <span class="emoji">🎀</span>
                 </button>
@@ -503,7 +437,7 @@
             </div>
             
             <div class="mt-4">
-                <button onclick="editProfile()" class="text-pink-500 text-sm">
+                <button id="editProfileBtn" class="text-pink-500 text-sm">
                     <i class="fas fa-user-edit mr-1"></i> Editar perfil
                 </button>
             </div>
@@ -540,9 +474,22 @@
         const displayName = document.getElementById('displayName');
         const profilePreview = document.getElementById('profilePreview');
         const userNameInput = document.getElementById('userName');
+        const profilePhotoInput = document.getElementById('profilePhoto');
         
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
+            // Configurar event listeners
+            document.getElementById('verificationBtn').addEventListener('click', showProfileScreen);
+            document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
+            document.getElementById('calculateBtn').addEventListener('click', calcularMeta);
+            document.getElementById('add200ml').addEventListener('click', () => adicionarAgua(200));
+            document.getElementById('add500ml').addEventListener('click', () => adicionarAgua(500));
+            document.getElementById('editProfileBtn').addEventListener('click', editProfile);
+            profilePhotoInput.addEventListener('change', previewImage);
+            pesoInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') calcularMeta();
+            });
+            
             // Verificar se já existe um perfil salvo
             const profile = localStorage.getItem('hidratacaoAmorProfile');
             
@@ -583,15 +530,15 @@
         }
         
         // Fazer upload e preview da imagem
-        function previewImage(input) {
-            if (input.files && input.files[0]) {
+        function previewImage() {
+            if (profilePhotoInput.files && profilePhotoInput.files[0]) {
                 const reader = new FileReader();
                 
                 reader.onload = function(e) {
                     profilePreview.src = e.target.result;
                 }
                 
-                reader.readAsDataURL(input.files[0]);
+                reader.readAsDataURL(profilePhotoInput.files[0]);
             }
         }
         
@@ -620,4 +567,31 @@
         
         // Editar perfil
         function editProfile() {
-            const profile = JSON.parse(localStorage.getItem('hidratacaoAmorPr
+            const profile = JSON.parse(localStorage.getItem('hidratacaoAmorProfile'));
+            
+            if (profile) {
+                profilePreview.src = profile.photo;
+                userNameInput.value = profile.name;
+            }
+            
+            showScreen(profileScreen);
+        }
+        
+        // Carregar dados do localStorage
+        function carregarDados() {
+            const dadosSalvos = localStorage.getItem('hidratacaoAmor');
+            if (dadosSalvos) {
+                const dados = JSON.parse(dadosSalvos);
+                consumido = dados.consumido || 0;
+                meta = dados.meta || 2000;
+                if (dados.peso) {
+                    pesoInput.value = dados.peso;
+                }
+                document.getElementById('metaDiaria').textContent = meta;
+            }
+        }
+        
+        // Salvar dados no localStorage
+        function salvarDados() {
+            const dados = {
+      
