@@ -2,29 +2,35 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Nika Game</title>
+  <title>Nika The Game</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
-    html, body {
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
+    }
+    
+    html, body {
       height: 100%;
       width: 100%;
-      background: black;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
       overflow: hidden;
       touch-action: manipulation;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
+    
     h1, #score {
-      font-family: monospace;
       color: #ff66a3;
       text-align: center;
       margin: 5px 0;
-      font-size: 4vw;
+      text-shadow: 0 0 10px rgba(255, 102, 163, 0.7);
     }
+    
     #gameContainer {
       display: flex;
       flex-direction: column;
@@ -34,22 +40,50 @@
       width: 100%;
       max-width: 100vw;
       padding: 0 5px;
-      box-sizing: border-box;
     }
+    
+    .title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      position: relative;
+    }
+    
+    .bow {
+      font-size: 28px;
+      margin-right: 10px;
+      animation: bounce 2s infinite;
+    }
+    
     .canvas-wrapper {
       position: relative;
       width: 100%;
-      max-width: 240px; /* Largura original do canvas */
+      max-width: 240px;
       margin: 0 auto;
     }
+    
     canvas {
       display: block;
       width: 100%;
       height: auto;
-      aspect-ratio: 240/400; /* Manter proporção original */
+      aspect-ratio: 240/400;
       border: 2px solid #ff66a3;
+      border-radius: 5px;
+      box-shadow: 0 0 15px rgba(255, 102, 163, 0.5);
       image-rendering: pixelated;
     }
+    
+    #score {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 10px 0;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 8px 15px;
+      border-radius: 20px;
+      border: 1px solid #ff66a3;
+    }
+    
     .controls {
       display: none;
       flex-direction: column;
@@ -59,14 +93,16 @@
       width: 100%;
       max-width: 240px;
     }
+    
     .row {
       display: flex;
       gap: 10px;
       justify-content: center;
       width: 100%;
     }
+    
     button {
-      background: #111;
+      background: rgba(0, 0, 0, 0.7);
       border: 2px solid #ff66a3;
       color: #ff66a3;
       font-size: 22px;
@@ -76,16 +112,24 @@
       min-height: 55px;
       touch-action: manipulation;
       flex: 1;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 0 10px rgba(255, 102, 163, 0.3);
     }
+    
     button:active {
       background: #ff66a3;
       color: black;
+      transform: scale(0.95);
     }
+    
     #startScreen {
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: black;
+      top: 0; 
+      left: 0;
+      width: 100%; 
+      height: 100%;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
       color: #ff66a3;
       display: flex;
       flex-direction: column;
@@ -94,18 +138,70 @@
       z-index: 10;
       text-align: center;
       padding: 20px;
-      box-sizing: border-box;
     }
-    #startScreen h2 {
-      font-size: 6vw;
+    
+    .start-title {
+      font-size: 42px;
       margin-bottom: 20px;
+      text-shadow: 0 0 15px rgba(255, 102, 163, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
+    
+    .start-bow {
+      font-size: 40px;
+      margin-right: 15px;
+      animation: spin 3s infinite linear;
+    }
+    
     #startScreen button {
       font-size: 24px;
       padding: 15px 30px;
+      margin-top: 20px;
+      background: rgba(255, 102, 163, 0.2);
+      border: 2px solid #ff66a3;
+      border-radius: 30px;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 0 20px rgba(255, 102, 163, 0.5);
     }
     
-    /* Media queries para ajustes em diferentes tamanhos de tela */
+    #startScreen button:hover {
+      background: rgba(255, 102, 163, 0.8);
+      transform: scale(1.05);
+    }
+    
+    .particle {
+      position: absolute;
+      background: #ff66a3;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0.8;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes explode {
+      0% { 
+        transform: scale(1);
+        opacity: 1;
+      }
+      100% { 
+        transform: scale(2);
+        opacity: 0;
+      }
+    }
+    
     @media (max-height: 700px) {
       h1, #score {
         font-size: 16px;
@@ -122,16 +218,25 @@
         font-size: 18px;
         padding: 10px;
       }
+      
+      .start-title {
+        font-size: 32px;
+      }
     }
   </style>
 </head>
 <body>
   <div id="gameContainer">
-    <h1>Nika Game</h1>
+    <div class="title">
+      <div class="bow">🎀</div>
+      <h1>Nika The Game</h1>
+    </div>
     <div class="canvas-wrapper">
       <canvas id="tetris" width="240" height="400"></canvas>
     </div>
     <div id="score">Score: 0</div>
+    <div id="level">Level: 1</div>
+    <div id="lines">Lines: 0</div>
     <div class="controls" id="controls">
       <div class="row">
         <button onclick="playerMove(-1)">◀</button>
@@ -139,7 +244,8 @@
         <button onclick="playerMove(1)">▶</button>
       </div>
       <div class="row">
-        <button onclick="playerRotate(1)">⟳</button>
+        <button onclick="playerRotate(-1)">↺</button>
+        <button onclick="playerRotate(1)">↻</button>
       </div>
     </div>
   </div>
@@ -148,20 +254,31 @@
   <audio id="bgm" src="https://github.com/kiki3456/Nika/raw/7210152aa48e1e0d44da98d717be64b8cbcb7680/Be%20My%20Baby%20%5B8%20Bit%20Tribute%20to%20Ronnie%20Spector%20_%20The%20Ronettes%5D%20-%208%20Bit%20Universe(MP3_160K).mp3" loop></audio>
 
   <div id="startScreen">
-    <h2>🎮 Nika Game</h2>
+    <div class="start-title">
+      <div class="start-bow">🎀</div>
+      <h2>Nika The Game</h2>
+    </div>
+    <p>Complete linhas para ganhar pontos!</p>
+    <p>Use as setas para mover e rotacionar as peças</p>
     <button onclick="startGame()">Iniciar Jogo</button>
   </div>
 
   <script>
     const canvas = document.getElementById('tetris');
     const context = canvas.getContext('2d');
-
+    
+    // Sistema de partículas para animação
+    const particles = [];
+    
     // Arena fixa 12x20
     const arena = createMatrix(12, 20);
-    const player = { pos: {x:0, y:0}, matrix: null, score: 0 };
-
-    // Removida a função resizeCanvas original
-    // A responsividade agora é tratada pelo CSS
+    const player = { 
+      pos: {x:0, y:0}, 
+      matrix: null, 
+      score: 0,
+      level: 1,
+      lines: 0
+    };
 
     function createMatrix(w, h) {
       const matrix = [];
@@ -206,6 +323,16 @@
               cellSize, 
               cellSize
             );
+            
+            // Adicionar efeito de brilho
+            context.strokeStyle = 'rgba(255,255,255,0.2)';
+            context.lineWidth = 1;
+            context.strokeRect(
+              (x + offset.x) * cellSize, 
+              (y + offset.y) * cellSize, 
+              cellSize, 
+              cellSize
+            );
           }
         });
       });
@@ -220,6 +347,53 @@
       // Desenhar a arena e o jogador
       drawMatrix(arena, {x:0, y:0});
       drawMatrix(player.matrix, player.pos);
+      
+      // Desenhar partículas
+      drawParticles();
+    }
+
+    function drawParticles() {
+      const cellSize = Math.min(canvas.width / 12, canvas.height / 20);
+      
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        context.fillStyle = p.color;
+        context.globalAlpha = p.opacity;
+        context.fillRect(
+          p.x * cellSize, 
+          p.y * cellSize, 
+          cellSize * p.size, 
+          cellSize * p.size
+        );
+        
+        // Atualizar partícula
+        p.x += p.vx;
+        p.y += p.vy;
+        p.opacity -= 0.02;
+        p.size -= 0.02;
+        
+        // Remover partículas que não são mais visíveis
+        if (p.opacity <= 0 || p.size <= 0) {
+          particles.splice(i, 1);
+          i--;
+        }
+      }
+      
+      context.globalAlpha = 1;
+    }
+
+    function createParticles(x, y, color) {
+      for (let i = 0; i < 10; i++) {
+        particles.push({
+          x: x + Math.random() * 0.8,
+          y: y + Math.random() * 0.8,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5,
+          color: color,
+          opacity: 1,
+          size: Math.random() * 0.5 + 0.5
+        });
+      }
     }
 
     function merge(arena, player) {
@@ -233,16 +407,39 @@
     }
 
     function arenaSweep() {
-      let rowCount = 1;
+      let rowCount = 0;
+      let linesCleared = 0;
+      
       for (let y = arena.length - 1; y >= 0; --y) {
         if (arena[y].every(v => v !== 0)) {
+          // Criar partículas para animação de explosão
+          for (let x = 0; x < arena[y].length; x++) {
+            createParticles(x, y, colors[arena[y][x]]);
+          }
+          
           const row = arena.splice(y, 1)[0].fill(0);
           arena.unshift(row);
           ++y;
-          player.score += rowCount * 10;
-          rowCount *= 2;
-          dropInterval = Math.max(200, dropInterval - 50);
+          linesCleared++;
+          rowCount = linesCleared * 100 * player.level;
         }
+      }
+      
+      if (linesCleared > 0) {
+        // Sistema de pontuação melhorado
+        const lineScores = [0, 100, 300, 500, 800]; // Pontuação por 0, 1, 2, 3, 4 linhas
+        const scoreToAdd = lineScores[linesCleared] * player.level;
+        
+        player.score += scoreToAdd;
+        player.lines += linesCleared;
+        
+        // Aumentar nível a cada 10 linhas
+        player.level = Math.floor(player.lines / 10) + 1;
+        
+        // Aumentar velocidade com o nível
+        dropInterval = Math.max(100, 1000 - (player.level - 1) * 100);
+        
+        updateStats();
       }
     }
 
@@ -253,7 +450,6 @@
         merge(arena, player);
         playerReset();
         arenaSweep();
-        updateScore();
       }
       dropCounter = 0;
     }
@@ -271,8 +467,10 @@
       if (collide(arena, player)) {
         arena.forEach(row => row.fill(0));
         player.score = 0;
+        player.level = 1;
+        player.lines = 0;
         dropInterval = 1000;
-        updateScore();
+        updateStats();
       }
     }
 
@@ -314,8 +512,10 @@
       requestAnimationFrame(update);
     }
 
-    function updateScore() {
+    function updateStats() {
       document.getElementById('score').innerText = 'Score: ' + player.score;
+      document.getElementById('level').innerText = 'Level: ' + player.level;
+      document.getElementById('lines').innerText = 'Lines: ' + player.lines;
     }
 
     const colors = [
@@ -358,9 +558,22 @@
       document.getElementById("startScreen").style.display = "none";
       document.getElementById("controls").style.display = "flex";
       playerReset();
-      updateScore();
+      updateStats();
       update();
     }
+    
+    // Adicionar elementos de estatísticas ao HTML
+    const levelElement = document.createElement('div');
+    levelElement.id = 'level';
+    levelElement.style.cssText = document.getElementById('score').style.cssText;
+    levelElement.innerText = 'Level: 1';
+    document.getElementById('gameContainer').insertBefore(levelElement, document.getElementById('score').nextSibling);
+    
+    const linesElement = document.createElement('div');
+    linesElement.id = 'lines';
+    linesElement.style.cssText = document.getElementById('score').style.cssText;
+    linesElement.innerText = 'Lines: 0';
+    document.getElementById('gameContainer').insertBefore(linesElement, levelElement.nextSibling);
   </script>
 </body>
 </html>
