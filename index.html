@@ -23,6 +23,7 @@
       color: #ff66a3;
       text-align: center;
       margin: 5px 0;
+      font-size: 4vw;
     }
     #gameContainer {
       display: flex;
@@ -31,11 +32,21 @@
       justify-content: center;
       flex: 1;
       width: 100%;
+      max-width: 100vw;
+      padding: 0 5px;
+      box-sizing: border-box;
+    }
+    .canvas-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 240px; /* Largura original do canvas */
+      margin: 0 auto;
     }
     canvas {
       display: block;
-      max-width: 100%;
-      max-height: 80vh;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 240/400; /* Manter proporção original */
       border: 2px solid #ff66a3;
       image-rendering: pixelated;
     }
@@ -43,12 +54,16 @@
       display: none;
       flex-direction: column;
       align-items: center;
-      margin-top: 5px;
+      margin-top: 10px;
       gap: 5px;
+      width: 100%;
+      max-width: 240px;
     }
     .row {
       display: flex;
       gap: 10px;
+      justify-content: center;
+      width: 100%;
     }
     button {
       background: #111;
@@ -60,6 +75,7 @@
       min-width: 70px;
       min-height: 55px;
       touch-action: manipulation;
+      flex: 1;
     }
     button:active {
       background: #ff66a3;
@@ -76,33 +92,60 @@
       justify-content: center;
       align-items: center;
       z-index: 10;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    #startScreen h2 {
+      font-size: 6vw;
+      margin-bottom: 20px;
     }
     #startScreen button {
       font-size: 24px;
       padding: 15px 30px;
+    }
+    
+    /* Media queries para ajustes em diferentes tamanhos de tela */
+    @media (max-height: 700px) {
+      h1, #score {
+        font-size: 16px;
+      }
+      .canvas-wrapper {
+        max-width: 200px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      button {
+        min-width: 60px;
+        min-height: 50px;
+        font-size: 18px;
+        padding: 10px;
+      }
     }
   </style>
 </head>
 <body>
   <div id="gameContainer">
     <h1>Nika Game</h1>
-    <canvas id="tetris" width="240" height="400"></canvas>
+    <div class="canvas-wrapper">
+      <canvas id="tetris" width="240" height="400"></canvas>
+    </div>
     <div id="score">Score: 0</div>
+    <div class="controls" id="controls">
+      <div class="row">
+        <button onclick="playerMove(-1)">◀</button>
+        <button id="downBtn">▼</button>
+        <button onclick="playerMove(1)">▶</button>
+      </div>
+      <div class="row">
+        <button onclick="playerRotate(1)">⟳</button>
+      </div>
+    </div>
   </div>
 
   <!-- Música em loop -->
   <audio id="bgm" src="https://github.com/kiki3456/Nika/raw/7210152aa48e1e0d44da98d717be64b8cbcb7680/Be%20My%20Baby%20%5B8%20Bit%20Tribute%20to%20Ronnie%20Spector%20_%20The%20Ronettes%5D%20-%208%20Bit%20Universe(MP3_160K).mp3" loop></audio>
-
-  <div class="controls" id="controls">
-    <div class="row">
-      <button onclick="playerMove(-1)">◀</button>
-      <button id="downBtn">▼</button>
-      <button onclick="playerMove(1)">▶</button>
-    </div>
-    <div class="row">
-      <button onclick="playerRotate(1)">⟳</button>
-    </div>
-  </div>
 
   <div id="startScreen">
     <h2>🎮 Nika Game</h2>
@@ -117,16 +160,8 @@
     const arena = createMatrix(12, 20);
     const player = { pos: {x:0, y:0}, matrix: null, score: 0 };
 
-    function resizeCanvas() {
-      const scale = Math.min(
-        window.innerWidth / canvas.width,
-        window.innerHeight / canvas.height
-      );
-      canvas.style.transform = `scale(${scale})`;
-      canvas.style.transformOrigin = "center center";
-    }
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
+    // Removida a função resizeCanvas original
+    // A responsividade agora é tratada pelo CSS
 
     function createMatrix(w, h) {
       const matrix = [];
@@ -158,19 +193,31 @@
     }
 
     function drawMatrix(matrix, offset) {
+      // Ajustar para o tamanho atual do canvas
+      const cellSize = Math.min(canvas.width / 12, canvas.height / 20);
+      
       matrix.forEach((row, y) => {
         row.forEach((value, x) => {
           if (value !== 0) {
             context.fillStyle = colors[value];
-            context.fillRect(x + offset.x, y + offset.y, 1, 1);
+            context.fillRect(
+              (x + offset.x) * cellSize, 
+              (y + offset.y) * cellSize, 
+              cellSize, 
+              cellSize
+            );
           }
         });
       });
     }
 
     function draw() {
+      // Limpar canvas considerando o tamanho atual
+      context.clearRect(0, 0, canvas.width, canvas.height);
       context.fillStyle = '#000';
       context.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Desenhar a arena e o jogador
       drawMatrix(arena, {x:0, y:0});
       drawMatrix(player.matrix, player.pos);
     }
