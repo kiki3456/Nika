@@ -24,7 +24,7 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     
-    h1, #score {
+    h1, #score, #level, #lines {
       color: #ff66a3;
       text-align: center;
       margin: 5px 0;
@@ -72,55 +72,21 @@
       border-radius: 5px;
       box-shadow: 0 0 15px rgba(255, 102, 163, 0.5);
       image-rendering: pixelated;
+      touch-action: none;
     }
     
-    #score {
-      font-size: 20px;
+    #score, #level, #lines {
+      font-size: 16px;
       font-weight: bold;
-      margin: 10px 0;
+      margin: 5px 0;
       background: rgba(0, 0, 0, 0.5);
-      padding: 8px 15px;
-      border-radius: 20px;
+      padding: 5px 10px;
+      border-radius: 15px;
       border: 1px solid #ff66a3;
     }
     
     .controls {
       display: none;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 10px;
-      gap: 5px;
-      width: 100%;
-      max-width: 240px;
-    }
-    
-    .row {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      width: 100%;
-    }
-    
-    button {
-      background: rgba(0, 0, 0, 0.7);
-      border: 2px solid #ff66a3;
-      color: #ff66a3;
-      font-size: 22px;
-      padding: 12px;
-      border-radius: 10px;
-      min-width: 70px;
-      min-height: 55px;
-      touch-action: manipulation;
-      flex: 1;
-      cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 0 0 10px rgba(255, 102, 163, 0.3);
-    }
-    
-    button:active {
-      background: #ff66a3;
-      color: black;
-      transform: scale(0.95);
     }
     
     #startScreen {
@@ -181,6 +147,16 @@
       opacity: 0.8;
     }
     
+    .touch-indicator {
+      position: absolute;
+      background: rgba(255, 102, 163, 0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      display: none;
+    }
+    
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-5px); }
@@ -203,8 +179,8 @@
     }
     
     @media (max-height: 700px) {
-      h1, #score {
-        font-size: 16px;
+      h1, #score, #level, #lines {
+        font-size: 14px;
       }
       .canvas-wrapper {
         max-width: 200px;
@@ -212,13 +188,6 @@
     }
     
     @media (max-width: 480px) {
-      button {
-        min-width: 60px;
-        min-height: 50px;
-        font-size: 18px;
-        padding: 10px;
-      }
-      
       .start-title {
         font-size: 32px;
       }
@@ -233,20 +202,13 @@
     </div>
     <div class="canvas-wrapper">
       <canvas id="tetris" width="240" height="400"></canvas>
+      <div class="touch-indicator" id="touchIndicator"></div>
     </div>
     <div id="score">Score: 0</div>
     <div id="level">Level: 1</div>
     <div id="lines">Lines: 0</div>
     <div class="controls" id="controls">
-      <div class="row">
-        <button onclick="playerMove(-1)">◀</button>
-        <button id="downBtn">▼</button>
-        <button onclick="playerMove(1)">▶</button>
-      </div>
-      <div class="row">
-        <button onclick="playerRotate(-1)">↺</button>
-        <button onclick="playerRotate(1)">↻</button>
-      </div>
+      <!-- Os controles manuais serão ocultos e substituídos por touch -->
     </div>
   </div>
 
@@ -259,16 +221,27 @@
       <h2>Nika The Game</h2>
     </div>
     <p>Complete linhas para ganhar pontos!</p>
-    <p>Use as setas para mover e rotacionar as peças</p>
+    <p>Controles touch:</p>
+    <p>- Arraste para os lados para mover</p>
+    <p>- Arraste para baixo para acelerar</p>
+    <p>- Toque para rotacionar</p>
     <button onclick="startGame()">Iniciar Jogo</button>
   </div>
 
   <script>
     const canvas = document.getElementById('tetris');
     const context = canvas.getContext('2d');
+    const touchIndicator = document.getElementById('touchIndicator');
     
     // Sistema de partículas para animação
     const particles = [];
+    
+    // Variáveis para controle touch
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let isDragging = false;
+    let lastMoveTime = 0;
+    let fastDropActive = false;
     
     // Arena fixa 12x20
     const arena = createMatrix(12, 20);
@@ -407,7 +380,6 @@
     }
 
     function arenaSweep() {
-      let rowCount = 0;
       let linesCleared = 0;
       
       for (let y = arena.length - 1; y >= 0; --y) {
@@ -421,7 +393,6 @@
           arena.unshift(row);
           ++y;
           linesCleared++;
-          rowCount = linesCleared * 100 * player.level;
         }
       }
       
@@ -507,7 +478,14 @@
       const deltaTime = time - lastTime;
       lastTime = time;
       dropCounter += deltaTime;
-      if (dropCounter > dropInterval) playerDrop();
+      
+      // Se o fast drop está ativo, acelerar a queda
+      if (fastDropActive) {
+        playerDrop();
+      } else if (dropCounter > dropInterval) {
+        playerDrop();
+      }
+      
       draw();
       requestAnimationFrame(update);
     }
@@ -529,6 +507,7 @@
       '#ff3385',
     ];
 
+    // Eventos de teclado (mantidos para compatibilidade)
     document.addEventListener('keydown', event => {
       if (event.key === "ArrowLeft") playerMove(-1);
       else if (event.key === "ArrowRight") playerMove(1);
@@ -537,43 +516,98 @@
       else if (event.key === "w" || event.key === "W" || event.key === "ArrowUp") playerRotate(1);
     });
 
-    const downBtn = document.getElementById("downBtn");
-    let downInterval;
-    function startFastDrop() {
-      if (!downInterval) downInterval = setInterval(playerDrop, 50);
-    }
-    function stopFastDrop() {
-      clearInterval(downInterval);
-      downInterval = null;
-    }
-    downBtn.addEventListener("mousedown", startFastDrop);
-    downBtn.addEventListener("touchstart", startFastDrop);
-    downBtn.addEventListener("mouseup", stopFastDrop);
-    downBtn.addEventListener("mouseleave", stopFastDrop);
-    downBtn.addEventListener("touchend", stopFastDrop);
+    // Sistema de controle por touch
+    canvas.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+      isDragging = true;
+      
+      // Mostrar indicador de toque
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      
+      touchIndicator.style.display = 'block';
+      touchIndicator.style.left = (touch.clientX - rect.left) + 'px';
+      touchIndicator.style.top = (touch.clientY - rect.top) + 'px';
+      touchIndicator.style.width = '30px';
+      touchIndicator.style.height = '30px';
+      
+      // Reduzir o indicador gradualmente
+      setTimeout(() => {
+        touchIndicator.style.width = '20px';
+        touchIndicator.style.height = '20px';
+      }, 50);
+      
+      lastMoveTime = Date.now();
+    });
+
+    canvas.addEventListener('touchmove', function(e) {
+      e.preventDefault();
+      if (!isDragging) return;
+      
+      const touch = e.touches[0];
+      const currentX = touch.clientX;
+      const currentY = touch.clientY;
+      
+      const deltaX = currentX - touchStartX;
+      const deltaY = currentY - touchStartY;
+      
+      // Atualizar a posição do indicador
+      const rect = canvas.getBoundingClientRect();
+      touchIndicator.style.left = (currentX - rect.left) + 'px';
+      touchIndicator.style.top = (currentY - rect.top) + 'px';
+      
+      // Mover horizontalmente com base no movimento
+      if (Math.abs(deltaX) > 15) {
+        const moveDirection = deltaX > 0 ? 1 : -1;
+        playerMove(moveDirection);
+        touchStartX = currentX;
+        touchStartY = currentY;
+        lastMoveTime = Date.now();
+      }
+      
+      // Verificar se é um movimento rápido para baixo
+      if (deltaY > 30 && Date.now() - lastMoveTime < 200) {
+        fastDropActive = true;
+      }
+    });
+
+    canvas.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      
+      if (!isDragging) return;
+      
+      // Esconder o indicador de toque
+      touchIndicator.style.display = 'none';
+      
+      const touch = e.changedTouches[0];
+      const currentX = touch.clientX;
+      const currentY = touch.clientY;
+      
+      const deltaX = currentX - touchStartX;
+      const deltaY = currentY - touchStartY;
+      
+      // Se foi um toque rápido (não arrastou muito)
+      if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
+        playerRotate(1); // Rotacionar a peça
+      }
+      
+      // Desativar o fast drop
+      fastDropActive = false;
+      isDragging = false;
+    });
 
     function startGame() {
       const bgm = document.getElementById("bgm");
       bgm.play().catch(err => console.log("Áudio bloqueado:", err));
       document.getElementById("startScreen").style.display = "none";
-      document.getElementById("controls").style.display = "flex";
       playerReset();
       updateStats();
       update();
     }
-    
-    // Adicionar elementos de estatísticas ao HTML
-    const levelElement = document.createElement('div');
-    levelElement.id = 'level';
-    levelElement.style.cssText = document.getElementById('score').style.cssText;
-    levelElement.innerText = 'Level: 1';
-    document.getElementById('gameContainer').insertBefore(levelElement, document.getElementById('score').nextSibling);
-    
-    const linesElement = document.createElement('div');
-    linesElement.id = 'lines';
-    linesElement.style.cssText = document.getElementById('score').style.cssText;
-    linesElement.innerText = 'Lines: 0';
-    document.getElementById('gameContainer').insertBefore(linesElement, levelElement.nextSibling);
   </script>
 </body>
 </html>
