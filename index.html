@@ -1,613 +1,186 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Nika The Game</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Gênio do Futuro</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    :root{
+      --bg:#ffe6f2;
+      --card:#ffffffcc;
+      --accent:#ff69b4;
+      --accent-dark:#d85693;
+      --hello-pink:#ff9acb;
+      --glass:rgba(255,255,255,0.45);
     }
-    
-    html, body {
-      height: 100%;
-      width: 100%;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      overflow: hidden;
-      touch-action: manipulation;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:linear-gradient(180deg,#ffd6eb 0%,#ffe6f7 100%);
+      color:#5a2a47;
     }
-    
-    h1, #score, #level, #lines {
-      color: #ff66a3;
-      text-align: center;
-      margin: 5px 0;
-      text-shadow: 0 0 10px rgba(255, 102, 163, 0.7);
+    .container{
+      width:min(720px,94%);
+      background:var(--card);
+      padding:28px;
+      border-radius:20px;
+      box-shadow:0 10px 35px rgba(255,116,178,0.35);
+      border:2px solid var(--hello-pink);
+      position:relative;
     }
-    
-    #gameContainer {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      flex: 1;
-      width: 100%;
-      max-width: 100vw;
-      padding: 0 5px;
+    /* Laços decorativos estilo Hello Kitty */
+    .bow{
+      position:absolute;
+      width:70px;
+      top:-28px;
+      right:-20px;
+      transform:rotate(12deg);
     }
-    
-    .title {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 10px;
-      position: relative;
+    header{display:flex;gap:16px;align-items:center}
+    .logo{
+      width:78px;
+      height:78px;
+      border-radius:20px;
+      background:linear-gradient(135deg,#ff69b4,#ff85c5);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+      font-size:26px;
+      color:white;
+      box-shadow:0 6px 18px rgba(255,105,180,0.4);
     }
-    
-    .bow {
-      font-size: 28px;
-      margin-right: 10px;
-      animation: bounce 2s infinite;
+    h1{margin:0;font-size:26px;color:#b32663;font-weight:800}
+    p.lead{margin:8px 0 18px;color:#7a3a55;font-size:15px}
+    .card{
+      background:#ffffffee;
+      padding:24px;
+      border-radius:16px;
+      border:2px solid #ffb3d9;
+      box-shadow:0 8px 18px rgba(255,135,195,0.28);
+      margin-top:18px;
+      position:relative;
     }
-    
-    .canvas-wrapper {
-      position: relative;
-      width: 100%;
-      max-width: 240px;
-      margin: 0 auto;
+    .cat-ear{
+      position:absolute;
+      width:42px;
+      top:-22px;
+      left:12px;
     }
-    
-    canvas {
-      display: block;
-      width: 100%;
-      height: auto;
-      aspect-ratio: 240/400;
-      border: 2px solid #ff66a3;
-      border-radius: 5px;
-      box-shadow: 0 0 15px rgba(255, 102, 163, 0.5);
-      image-rendering: pixelated;
-      touch-action: none;
+    .prediction{
+      min-height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:30px;
+      font-weight:800;
+      color:#c2186a;
     }
-    
-    #score, #level, #lines {
-      font-size: 16px;
-      font-weight: bold;
-      margin: 5px 0;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 5px 10px;
-      border-radius: 15px;
-      border: 1px solid #ff66a3;
+    .controls{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      margin-top:16px;
     }
-    
-    .controls {
-      display: none;
+    button{
+      background:linear-gradient(180deg,var(--accent),var(--accent-dark));
+      border:none;
+      color:white;
+      padding:12px 22px;
+      border-radius:14px;
+      font-weight:700;
+      cursor:pointer;
+      font-size:15px;
+      box-shadow:0 6px 18px rgba(255,105,180,0.34);
+      transition:transform .12s ease,box-shadow .12s ease;
     }
-    
-    #startScreen {
-      position: absolute;
-      top: 0; 
-      left: 0;
-      width: 100%; 
-      height: 100%;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      color: #ff66a3;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-      text-align: center;
-      padding: 20px;
+    button:active{transform:translateY(2px)}
+    button.secondary{
+      background:white;
+      color:#c2186a;
+      border:2px solid #ff9acb;
+      box-shadow:none;
     }
-    
-    .start-title {
-      font-size: 42px;
-      margin-bottom: 20px;
-      text-shadow: 0 0 15px rgba(255, 102, 163, 0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    footer{
+      margin-top:16px;
+      text-align:center;
+      color:#7a3a55;
+      font-size:13px;
+      font-weight:600;
     }
-    
-    .start-bow {
-      font-size: 40px;
-      margin-right: 15px;
-      animation: spin 3s infinite linear;
-    }
-    
-    #startScreen button {
-      font-size: 24px;
-      padding: 15px 30px;
-      margin-top: 20px;
-      background: rgba(255, 102, 163, 0.2);
-      border: 2px solid #ff66a3;
-      border-radius: 30px;
-      color: #fff;
-      cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 0 20px rgba(255, 102, 163, 0.5);
-    }
-    
-    #startScreen button:hover {
-      background: rgba(255, 102, 163, 0.8);
-      transform: scale(1.05);
-    }
-    
-    .particle {
-      position: absolute;
-      background: #ff66a3;
-      border-radius: 50%;
-      pointer-events: none;
-      opacity: 0.8;
-    }
-    
-    .touch-indicator {
-      position: absolute;
-      background: rgba(255, 102, 163, 0.5);
-      border-radius: 50%;
-      pointer-events: none;
-      transform: translate(-50%, -50%);
-      z-index: 5;
-      display: none;
-    }
-    
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    @keyframes explode {
-      0% { 
-        transform: scale(1);
-        opacity: 1;
-      }
-      100% { 
-        transform: scale(2);
-        opacity: 0;
-      }
-    }
-    
-    @media (max-height: 700px) {
-      h1, #score, #level, #lines {
-        font-size: 14px;
-      }
-      .canvas-wrapper {
-        max-width: 200px;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .start-title {
-        font-size: 32px;
-      }
+    .sparkle{display:inline-block;animation:glow 1.6s ease-in-out infinite}
+    @keyframes glow{0%{opacity:.85}50%{opacity:1}100%{opacity:.85}}
+    .name{
+      display:inline-block;
+      padding:8px 14px;
+      border-radius:9999px;
+      background:#ffd6eb;
+      color:#b02060;
+      border:1px solid #ffb3d9;
     }
   </style>
 </head>
 <body>
-  <div id="gameContainer">
-    <div class="title">
-      <div class="bow">🎀</div>
-      <h1>Nika The Game</h1>
-    </div>
-    <div class="canvas-wrapper">
-      <canvas id="tetris" width="240" height="400"></canvas>
-      <div class="touch-indicator" id="touchIndicator"></div>
-    </div>
-    <div id="score">Score: 0</div>
-    <div id="level">Level: 1</div>
-    <div id="lines">Lines: 0</div>
-    <div class="controls" id="controls">
-      <!-- Os controles manuais serão ocultos e substituídos por touch -->
-    </div>
-  </div>
+  <div class="container">
+    
+    <header>
+      <div class="logo">GF</div>
+      <div>
+        <h1>Gênio do Futuro</h1>
+        <p class="lead">Um adivinhador extremamente preciso e divertido. Basta clicar para descobrir sua "profecia".</p>
+      </div>
+    </header>
 
-  <!-- Música em loop -->
-  <audio id="bgm" src="https://github.com/kiki3456/Nika/raw/7210152aa48e1e0d44da98d717be64b8cbcb7680/Be%20My%20Baby%20%5B8%20Bit%20Tribute%20to%20Ronnie%20Spector%20_%20The%20Ronettes%5D%20-%208%20Bit%20Universe(MP3_160K).mp3" loop></audio>
+    <div class="card">
+      
+      <div class="prediction" id="prediction">Pronto para adivinhar?</div>
 
-  <div id="startScreen">
-    <div class="start-title">
-      <div class="start-bow">🎀</div>
-      <h2>Nika The Game</h2>
+      <div class="controls">
+        <button id="genioBtn" class="mt-6 bg-pink-500 text-white py-3 px-6 rounded-full shadow-lg hover:bg-pink-600 transition">O GÊNIO QUE NUNCA ERRA</button>
+        <button id="resetBtn" class="secondary">Limpar</button>
+      </div>
     </div>
-    <p>Complete linhas para ganhar pontos!</p>
-    <p>Controles touch:</p>
-    <p>- Arraste para os lados para mover</p>
-    <p>- Arraste para baixo para acelerar</p>
-    <p>- Toque para rotacionar</p>
-    <button onclick="startGame()">Iniciar Jogo</button>
+
+    <footer>
+      Site de entretenimento, inspirado no estilo fofo e clássico de personagens adoráveis.
+    </footer>
   </div>
 
   <script>
-    const canvas = document.getElementById('tetris');
-    const context = canvas.getContext('2d');
-    const touchIndicator = document.getElementById('touchIndicator');
-    
-    // Sistema de partículas para animação
-    const particles = [];
-    
-    // Variáveis para controle touch
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let isDragging = false;
-    let lastMoveTime = 0;
-    let fastDropActive = false;
-    
-    // Arena fixa 12x20
-    const arena = createMatrix(12, 20);
-    const player = { 
-      pos: {x:0, y:0}, 
-      matrix: null, 
-      score: 0,
-      level: 1,
-      lines: 0
-    };
+    const predictionEl = document.getElementById('prediction');
+    const revealBtn = document.getElementById('revealBtn');
+    const resetBtn = document.getElementById('resetBtn');
 
-    function createMatrix(w, h) {
-      const matrix = [];
-      while (h--) matrix.push(new Array(w).fill(0));
-      return matrix;
+    function showName(name){
+      predictionEl.style.opacity = 0;
+      predictionEl.style.transform = 'translateY(-6px)';
+      setTimeout(()=>{
+        predictionEl.innerHTML = '<span class="sparkle">✨</span> <span class="name">' + name + '</span> <span class="sparkle">✨</span>';
+        predictionEl.style.transition = 'all 240ms ease';
+        predictionEl.style.opacity = 1;
+        predictionEl.style.transform = 'translateY(0)';
+      },160);
     }
 
-    function createPiece(type) {
-      if (type === 'T') return [[0,0,0],[1,1,1],[0,1,0]];
-      if (type === 'O') return [[2,2],[2,2]];
-      if (type === 'L') return [[0,3,0],[0,3,0],[0,3,3]];
-      if (type === 'J') return [[0,4,0],[0,4,0],[4,4,0]];
-      if (type === 'I') return [[0,5,0,0],[0,5,0,0],[0,5,0,0],[0,5,0,0]];
-      if (type === 'S') return [[0,6,6],[6,6,0],[0,0,0]];
-      if (type === 'Z') return [[7,7,0],[0,7,7],[0,0,0]];
-    }
-
-    function collide(arena, player) {
-      const m = player.matrix, o = player.pos;
-      for (let y = 0; y < m.length; ++y) {
-        for (let x = 0; x < m[y].length; ++x) {
-          if (m[y][x] !== 0 &&
-              (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) {
-            return true;
-          }
-        }
-      }
-      return false;
-    }
-
-    function drawMatrix(matrix, offset) {
-      // Ajustar para o tamanho atual do canvas
-      const cellSize = Math.min(canvas.width / 12, canvas.height / 20);
-      
-      matrix.forEach((row, y) => {
-        row.forEach((value, x) => {
-          if (value !== 0) {
-            context.fillStyle = colors[value];
-            context.fillRect(
-              (x + offset.x) * cellSize, 
-              (y + offset.y) * cellSize, 
-              cellSize, 
-              cellSize
-            );
-            
-            // Adicionar efeito de brilho
-            context.strokeStyle = 'rgba(255,255,255,0.2)';
-            context.lineWidth = 1;
-            context.strokeRect(
-              (x + offset.x) * cellSize, 
-              (y + offset.y) * cellSize, 
-              cellSize, 
-              cellSize
-            );
-          }
-        });
-      });
-    }
-
-    function draw() {
-      // Limpar canvas considerando o tamanho atual
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      context.fillStyle = '#000';
-      context.fillRect(0, 0, canvas.width, canvas.height);
-      
-      // Desenhar a arena e o jogador
-      drawMatrix(arena, {x:0, y:0});
-      drawMatrix(player.matrix, player.pos);
-      
-      // Desenhar partículas
-      drawParticles();
-    }
-
-    function drawParticles() {
-      const cellSize = Math.min(canvas.width / 12, canvas.height / 20);
-      
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        context.fillStyle = p.color;
-        context.globalAlpha = p.opacity;
-        context.fillRect(
-          p.x * cellSize, 
-          p.y * cellSize, 
-          cellSize * p.size, 
-          cellSize * p.size
-        );
-        
-        // Atualizar partícula
-        p.x += p.vx;
-        p.y += p.vy;
-        p.opacity -= 0.02;
-        p.size -= 0.02;
-        
-        // Remover partículas que não são mais visíveis
-        if (p.opacity <= 0 || p.size <= 0) {
-          particles.splice(i, 1);
-          i--;
-        }
-      }
-      
-      context.globalAlpha = 1;
-    }
-
-    function createParticles(x, y, color) {
-      for (let i = 0; i < 10; i++) {
-        particles.push({
-          x: x + Math.random() * 0.8,
-          y: y + Math.random() * 0.8,
-          vx: (Math.random() - 0.5) * 0.5,
-          vy: (Math.random() - 0.5) * 0.5,
-          color: color,
-          opacity: 1,
-          size: Math.random() * 0.5 + 0.5
-        });
-      }
-    }
-
-    function merge(arena, player) {
-      player.matrix.forEach((row, y) => {
-        row.forEach((value, x) => {
-          if (value !== 0) {
-            arena[y + player.pos.y][x + player.pos.x] = value;
-          }
-        });
-      });
-    }
-
-    function arenaSweep() {
-      let linesCleared = 0;
-      
-      for (let y = arena.length - 1; y >= 0; --y) {
-        if (arena[y].every(v => v !== 0)) {
-          // Criar partículas para animação de explosão
-          for (let x = 0; x < arena[y].length; x++) {
-            createParticles(x, y, colors[arena[y][x]]);
-          }
-          
-          const row = arena.splice(y, 1)[0].fill(0);
-          arena.unshift(row);
-          ++y;
-          linesCleared++;
-        }
-      }
-      
-      if (linesCleared > 0) {
-        // Sistema de pontuação melhorado
-        const lineScores = [0, 100, 300, 500, 800]; // Pontuação por 0, 1, 2, 3, 4 linhas
-        const scoreToAdd = lineScores[linesCleared] * player.level;
-        
-        player.score += scoreToAdd;
-        player.lines += linesCleared;
-        
-        // Aumentar nível a cada 10 linhas
-        player.level = Math.floor(player.lines / 10) + 1;
-        
-        // Aumentar velocidade com o nível
-        dropInterval = Math.max(100, 1000 - (player.level - 1) * 100);
-        
-        updateStats();
-      }
-    }
-
-    function playerDrop() {
-      player.pos.y++;
-      if (collide(arena, player)) {
-        player.pos.y--;
-        merge(arena, player);
-        playerReset();
-        arenaSweep();
-      }
-      dropCounter = 0;
-    }
-
-    function playerMove(dir) {
-      player.pos.x += dir;
-      if (collide(arena, player)) player.pos.x -= dir;
-    }
-
-    function playerReset() {
-      const pieces = 'TJLOSZI';
-      player.matrix = createPiece(pieces[Math.floor(pieces.length * Math.random())]);
-      player.pos.y = 0;
-      player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
-      if (collide(arena, player)) {
-        arena.forEach(row => row.fill(0));
-        player.score = 0;
-        player.level = 1;
-        player.lines = 0;
-        dropInterval = 1000;
-        updateStats();
-      }
-    }
-
-    function playerRotate(dir) {
-      const pos = player.pos.x;
-      let offset = 1;
-      rotate(player.matrix, dir);
-      while (collide(arena, player)) {
-        player.pos.x += offset;
-        offset = -(offset + (offset > 0 ? 1 : -1));
-        if (offset > player.matrix[0].length) {
-          rotate(player.matrix, -dir);
-          player.pos.x = pos;
-          return;
-        }
-      }
-    }
-
-    function rotate(matrix, dir) {
-      for (let y = 0; y < matrix.length; ++y) {
-        for (let x = 0; x < y; ++x) {
-          [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
-        }
-      }
-      if (dir > 0) matrix.forEach(row => row.reverse());
-      else matrix.reverse();
-    }
-
-    let dropCounter = 0;
-    let dropInterval = 1000;
-    let lastTime = 0;
-
-    function update(time = 0) {
-      const deltaTime = time - lastTime;
-      lastTime = time;
-      dropCounter += deltaTime;
-      
-      // Se o fast drop está ativo, acelerar a queda
-      if (fastDropActive) {
-        playerDrop();
-      } else if (dropCounter > dropInterval) {
-        playerDrop();
-      }
-      
-      draw();
-      requestAnimationFrame(update);
-    }
-
-    function updateStats() {
-      document.getElementById('score').innerText = 'Score: ' + player.score;
-      document.getElementById('level').innerText = 'Level: ' + player.level;
-      document.getElementById('lines').innerText = 'Lines: ' + player.lines;
-    }
-
-    const colors = [
-      null,
-      '#ff99cc',
-      '#ff66a3',
-      '#ff4d94',
-      '#ff1a75',
-      '#d6005f',
-      '#ff80bf',
-      '#ff3385',
-    ];
-
-    // Eventos de teclado (mantidos para compatibilidade)
-    document.addEventListener('keydown', event => {
-      if (event.key === "ArrowLeft") playerMove(-1);
-      else if (event.key === "ArrowRight") playerMove(1);
-      else if (event.key === "ArrowDown") playerDrop();
-      else if (event.key === "q" || event.key === "Q") playerRotate(-1);
-      else if (event.key === "w" || event.key === "W" || event.key === "ArrowUp") playerRotate(1);
+    revealBtn.addEventListener('click', ()=>{
+      showName('José');
     });
 
-    // Sistema de controle por touch
-    canvas.addEventListener('touchstart', function(e) {
-      e.preventDefault();
-      const touch = e.touches[0];
-      touchStartX = touch.clientX;
-      touchStartY = touch.clientY;
-      isDragging = true;
-      
-      // Mostrar indicador de toque
-      const rect = canvas.getBoundingClientRect();
-      const scaleX = canvas.width / rect.width;
-      const scaleY = canvas.height / rect.height;
-      
-      touchIndicator.style.display = 'block';
-      touchIndicator.style.left = (touch.clientX - rect.left) + 'px';
-      touchIndicator.style.top = (touch.clientY - rect.top) + 'px';
-      touchIndicator.style.width = '30px';
-      touchIndicator.style.height = '30px';
-      
-      // Reduzir o indicador gradualmente
-      setTimeout(() => {
-        touchIndicator.style.width = '20px';
-        touchIndicator.style.height = '20px';
-      }, 50);
-      
-      lastMoveTime = Date.now();
+    resetBtn.addEventListener('click', ()=>{
+      predictionEl.style.transition = 'all 160ms ease';
+      predictionEl.style.opacity = 0;
+      predictionEl.style.transform = 'translateY(10px)';
+      setTimeout(()=>{
+        predictionEl.textContent = 'Pronto para adivinhar?';
+        predictionEl.style.opacity = 1;
+        predictionEl.style.transform = 'translateY(0)';
+      },140);
     });
-
-    canvas.addEventListener('touchmove', function(e) {
-      e.preventDefault();
-      if (!isDragging) return;
-      
-      const touch = e.touches[0];
-      const currentX = touch.clientX;
-      const currentY = touch.clientY;
-      
-      const deltaX = currentX - touchStartX;
-      const deltaY = currentY - touchStartY;
-      
-      // Atualizar a posição do indicador
-      const rect = canvas.getBoundingClientRect();
-      touchIndicator.style.left = (currentX - rect.left) + 'px';
-      touchIndicator.style.top = (currentY - rect.top) + 'px';
-      
-      // Mover horizontalmente com base no movimento
-      if (Math.abs(deltaX) > 15) {
-        const moveDirection = deltaX > 0 ? 1 : -1;
-        playerMove(moveDirection);
-        touchStartX = currentX;
-        touchStartY = currentY;
-        lastMoveTime = Date.now();
-      }
-      
-      // Verificar se é um movimento rápido para baixo
-      if (deltaY > 30 && Date.now() - lastMoveTime < 200) {
-        fastDropActive = true;
-      }
-    });
-
-    canvas.addEventListener('touchend', function(e) {
-      e.preventDefault();
-      
-      if (!isDragging) return;
-      
-      // Esconder o indicador de toque
-      touchIndicator.style.display = 'none';
-      
-      const touch = e.changedTouches[0];
-      const currentX = touch.clientX;
-      const currentY = touch.clientY;
-      
-      const deltaX = currentX - touchStartX;
-      const deltaY = currentY - touchStartY;
-      
-      // Se foi um toque rápido (não arrastou muito)
-      if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
-        playerRotate(1); // Rotacionar a peça
-      }
-      
-      // Desativar o fast drop
-      fastDropActive = false;
-      isDragging = false;
-    });
-
-    function startGame() {
-      const bgm = document.getElementById("bgm");
-      bgm.play().catch(err => console.log("Áudio bloqueado:", err));
-      document.getElementById("startScreen").style.display = "none";
-      playerReset();
-      updateStats();
-      update();
-    }
   </script>
 </body>
 </html>
