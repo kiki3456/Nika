@@ -1,186 +1,41 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Gênio do Futuro</title>
-  <style>
-    :root{
-      --bg:#ffe6f2;
-      --card:#ffffffcc;
-      --accent:#ff69b4;
-      --accent-dark:#d85693;
-      --hello-pink:#ff9acb;
-      --glass:rgba(255,255,255,0.45);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial;
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:linear-gradient(180deg,#ffd6eb 0%,#ffe6f7 100%);
-      color:#5a2a47;
-    }
-    .container{
-      width:min(720px,94%);
-      background:var(--card);
-      padding:28px;
-      border-radius:20px;
-      box-shadow:0 10px 35px rgba(255,116,178,0.35);
-      border:2px solid var(--hello-pink);
-      position:relative;
-    }
-    /* Laços decorativos estilo Hello Kitty */
-    .bow{
-      position:absolute;
-      width:70px;
-      top:-28px;
-      right:-20px;
-      transform:rotate(12deg);
-    }
-    header{display:flex;gap:16px;align-items:center}
-    .logo{
-      width:78px;
-      height:78px;
-      border-radius:20px;
-      background:linear-gradient(135deg,#ff69b4,#ff85c5);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:800;
-      font-size:26px;
-      color:white;
-      box-shadow:0 6px 18px rgba(255,105,180,0.4);
-    }
-    h1{margin:0;font-size:26px;color:#b32663;font-weight:800}
-    p.lead{margin:8px 0 18px;color:#7a3a55;font-size:15px}
-    .card{
-      background:#ffffffee;
-      padding:24px;
-      border-radius:16px;
-      border:2px solid #ffb3d9;
-      box-shadow:0 8px 18px rgba(255,135,195,0.28);
-      margin-top:18px;
-      position:relative;
-    }
-    .cat-ear{
-      position:absolute;
-      width:42px;
-      top:-22px;
-      left:12px;
-    }
-    .prediction{
-      min-height:72px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:30px;
-      font-weight:800;
-      color:#c2186a;
-    }
-    .controls{
-      display:flex;
-      gap:12px;
-      justify-content:center;
-      margin-top:16px;
-    }
-    button{
-      background:linear-gradient(180deg,var(--accent),var(--accent-dark));
-      border:none;
-      color:white;
-      padding:12px 22px;
-      border-radius:14px;
-      font-weight:700;
-      cursor:pointer;
-      font-size:15px;
-      box-shadow:0 6px 18px rgba(255,105,180,0.34);
-      transition:transform .12s ease,box-shadow .12s ease;
-    }
-    button:active{transform:translateY(2px)}
-    button.secondary{
-      background:white;
-      color:#c2186a;
-      border:2px solid #ff9acb;
-      box-shadow:none;
-    }
-    footer{
-      margin-top:16px;
-      text-align:center;
-      color:#7a3a55;
-      font-size:13px;
-      font-weight:600;
-    }
-    .sparkle{display:inline-block;animation:glow 1.6s ease-in-out infinite}
-    @keyframes glow{0%{opacity:.85}50%{opacity:1}100%{opacity:.85}}
-    .name{
-      display:inline-block;
-      padding:8px 14px;
-      border-radius:9999px;
-      background:#ffd6eb;
-      color:#b02060;
-      border:1px solid #ffb3d9;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Gênio do Futuro</title>
+<style>
+body {
+    background: pink;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding-top: 80px;
+}
+button {
+    background: #ff4fa3;
+    color: white;
+    border: none;
+    padding: 18px 32px;
+    font-size: 22px;
+    border-radius: 40px;
+    cursor: pointer;
+}
+#resultado {
+    margin-top: 40px;
+    font-size: 26px;
+    font-weight: bold;
+}
+</style>
 </head>
 <body>
-  <div class="container">
-    
-    <header>
-      <div class="logo">GF</div>
-      <div>
-        <h1>Gênio do Futuro</h1>
-        <p class="lead">Um adivinhador extremamente preciso e divertido. Basta clicar para descobrir sua "profecia".</p>
-      </div>
-    </header>
 
-    <div class="card">
-      
-      <div class="prediction" id="prediction">Pronto para adivinhar?</div>
+<button id="genioBtn">O GÊNIO QUE NUNCA ERRA</button>
+<div id="resultado"></div>
 
-      <div class="controls">
-        <button id="genioBtn" class="mt-6 bg-pink-500 text-white py-3 px-6 rounded-full shadow-lg hover:bg-pink-600 transition">O GÊNIO QUE NUNCA ERRA</button>
-        <button id="resetBtn" class="secondary">Limpar</button>
-      </div>
-    </div>
+<script>
+document.getElementById("genioBtn").onclick = function() {
+    document.getElementById("resultado").innerText = "José";
+}
+</script>
 
-    <footer>
-      Site de entretenimento, inspirado no estilo fofo e clássico de personagens adoráveis.
-    </footer>
-  </div>
-
-  <script>
-    const predictionEl = document.getElementById('prediction');
-    const revealBtn = document.getElementById('revealBtn');
-    const resetBtn = document.getElementById('resetBtn');
-
-    function showName(name){
-      predictionEl.style.opacity = 0;
-      predictionEl.style.transform = 'translateY(-6px)';
-      setTimeout(()=>{
-        predictionEl.innerHTML = '<span class="sparkle">✨</span> <span class="name">' + name + '</span> <span class="sparkle">✨</span>';
-        predictionEl.style.transition = 'all 240ms ease';
-        predictionEl.style.opacity = 1;
-        predictionEl.style.transform = 'translateY(0)';
-      },160);
-    }
-
-    revealBtn.addEventListener('click', ()=>{
-      showName('José');
-    });
-
-    resetBtn.addEventListener('click', ()=>{
-      predictionEl.style.transition = 'all 160ms ease';
-      predictionEl.style.opacity = 0;
-      predictionEl.style.transform = 'translateY(10px)';
-      setTimeout(()=>{
-        predictionEl.textContent = 'Pronto para adivinhar?';
-        predictionEl.style.opacity = 1;
-        predictionEl.style.transform = 'translateY(0)';
-      },140);
-    });
-  </script>
 </body>
 </html>
