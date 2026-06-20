@@ -1,588 +1,446 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Messias Game - Memória Boliviana</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MESSIAS GAME - BOLÍVIA INSANE EDITION</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-<style>
-* {
-    box-sizing: border-box;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-}
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
 
-body{
-    font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
-    background: linear-gradient(135deg, #1a5f9e, #0d3b66, #1a5f9e);
-    background-attachment: fixed;
-    min-height: 100vh;
-    text-align: center;
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+        header h1 {
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+            color: #f4d03f; 
+            text-align: center;
+            margin-bottom: 5px;
+        }
 
-.game-container {
-    max-width: 700px;
-    width: 100%;
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(8px);
-    border-radius: 48px;
-    padding: 20px 15px 25px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    transition: all 0.3s;
-}
+        /* PAINEL DE STATUS TRICOLOR */
+        .status-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
 
-h1{
-    font-size: clamp(1.4rem, 6vw, 2rem);
-    color: #FFE484;
-    text-shadow: 3px 3px 0 #0d3b66, 5px 5px 0 rgba(0,0,0,0.2);
-    margin: 0 0 10px 0;
-    letter-spacing: -0.5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    flex-wrap: wrap;
-}
+        .status-box {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 8px 15px;
+            border-radius: 10px;
+            border: 2px solid #d52b1e; 
+        }
+        
+        #level-display { color: #f4d03f; } 
+        #timer-display { color: #d52b1e; font-size: 1.4rem; text-shadow: 0 0 5px #d52b1e; transition: color 0.2s; } 
+        #score-display { color: #007934; } 
 
-h1 span {
-    background: rgba(255,255,240,0.2);
-    padding: 0 8px;
-    border-radius: 40px;
-    font-size: 0.8em;
-}
+        /* TITO - O INSUPORTÁVEL */
+        .mascot-container {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 121, 52, 0.15); 
+            border-radius: 15px;
+            padding: 15px;
+            max-width: 550px;
+            width: 100%;
+            margin-bottom: 20px;
+            border: 3px solid #007934; 
+            box-shadow: 0 4px 15px rgba(0, 121, 52, 0.3);
+        }
 
-.stats-panel {
-    background: rgba(13, 59, 102, 0.7);
-    backdrop-filter: blur(4px);
-    border-radius: 60px;
-    padding: 10px 20px;
-    margin: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    box-shadow: 0 5px 12px rgba(0,0,0,0.2);
-}
+        .mascot-avatar {
+            font-size: 3.5rem;
+            margin-right: 15px;
+            animation: violent-tremor 0.1s infinite alternate;
+        }
 
-.stat-item {
-    background: white;
-    border-radius: 40px;
-    padding: 6px 18px;
-    font-weight: bold;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 1.2rem;
-    color: #0d3b66;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.1);
-}
+        .mascot-bubble {
+            background: #ffffff;
+            color: #111;
+            padding: 12px;
+            border-radius: 10px;
+            position: relative;
+            font-size: 1rem;
+            font-weight: bold;
+            flex-grow: 1;
+            border: 1px solid #f4d03f; 
+        }
 
-.stat-item span:first-child {
-    font-size: 1.3rem;
-}
+        .mascot-bubble::after {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 10px 10px 10px 0;
+            border-style: solid;
+            border-color: transparent #ffffff transparent transparent;
+        }
 
-.stat-item span:last-child {
-    font-weight: 800;
-    min-width: 40px;
-    background: #FFE484;
-    padding: 2px 10px;
-    border-radius: 30px;
-    color: #0d3b66;
-}
+        @keyframes violent-tremor {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            100% { transform: translate(-1px, -1px) rotate(2deg); }
+        }
 
-#message-area {
-    font-size: 1rem;
-    font-weight: bold;
-    background: #FFE484;
-    display: inline-block;
-    padding: 5px 18px;
-    border-radius: 40px;
-    color: #0d3b66;
-    transition: 0.2s;
-}
+        /* TABULEIRO DO JOGO */
+        .game-container {
+            width: 100%;
+            max-width: 650px;
+            display: grid;
+            gap: 10px;
+            perspective: 1000px;
+            margin-bottom: 20px;
+        }
 
-#game{
-    display: grid;
-    grid-template-columns: repeat(4, minmax(70px, 100px));
-    gap: 12px;
-    justify-content: center;
-    margin: 20px 10px;
-}
+        /* CARTAS */
+        .card {
+            aspect-ratio: 3/4;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.2s ease;
+            cursor: pointer;
+        }
 
-.card{
-    aspect-ratio: 1 / 1;
-    width: 100%;
-    background: linear-gradient(145deg, #FFD966, #FFB347);
-    border-radius: 20px;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 3.2rem;
-    transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    box-shadow: 0 8px 0 #a05e15;
-    transform: translateY(-2px);
-    font-weight: 500;
-    text-shadow: 2px 2px 2px rgba(0,0,0,0.1);
-}
+        .card.flipped, .card.matched {
+            transform: rotateY(180deg);
+        }
 
-.card:hover:not(.matched):not(.hidden-flip) {
-    transform: scale(0.97) translateY(0px);
-    box-shadow: 0 4px 0 #a05e15;
-}
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            border: 2px solid #f4d03f; 
+            padding: 5px;
+            text-align: center;
+        }
 
-.card.hidden {
-    background: linear-gradient(145deg, #2c7ab1, #1a5f8b);
-    box-shadow: 0 8px 0 #0a2e4a;
-    color: transparent;
-    text-shadow: none;
-    background-image: radial-gradient(circle at 35% 30%, rgba(255,255,200,0.3) 2%, transparent 2.5%);
-    background-size: 18px 18px;
-}
+        .card-back {
+            background: linear-gradient(135deg, #d52b1e 0%, #007934 100%);
+        }
 
-.card.matched {
-    background: linear-gradient(135deg, #58b368, #2e7d5e);
-    box-shadow: 0 4px 0 #1c523b;
-    transform: translateY(2px);
-    cursor: default;
-    filter: brightness(1.02);
-    opacity: 0.85;
-    animation: gentlePulse 0.4s ease;
-}
+        .card-back::before {
+            content: "🇧🇴"; 
+            font-size: 2.2rem;
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5));
+        }
 
-@keyframes gentlePulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); background: #6bcb7a; }
-    100% { transform: scale(1); }
-}
+        .card-front {
+            background-color: #fff;
+            color: #333;
+            transform: rotateY(180deg);
+        }
 
-.card:active:not(.matched):not(.hidden-flip) {
-    transform: scale(0.95) translateY(2px);
-    box-shadow: 0 2px 0 #a05e15;
-}
+        .card-icon {
+            font-size: 2.2rem;
+            margin-bottom: 2px;
+        }
 
-button{
-    margin-top: 10px;
-    padding: 12px 28px;
-    border: none;
-    border-radius: 60px;
-    background: #FFE484;
-    color: #0d3b66;
-    font-weight: bold;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 6px 0 #b47c2e;
-    font-family: inherit;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
+        .card-name {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #444;
+            line-height: 1;
+        }
 
-button:active {
-    transform: translateY(3px);
-    box-shadow: 0 2px 0 #b47c2e;
-}
+        .card.matched .card-front {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
 
-button:hover {
-    background: #FFD966;
-    transform: translateY(-1px);
-    box-shadow: 0 7px 0 #b47c2e;
-}
+        .card.matched .card-name { color: #bbb; }
 
-.confetti {
-    position: fixed;
-    width: 10px;
-    height: 10px;
-    background-color: gold;
-    position: absolute;
-    animation: fall 2s linear forwards;
-    z-index: 1000;
-    pointer-events: none;
-}
+        /* BOTÃO DE DESISTÊNCIA */
+        .btn {
+            padding: 10px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            background-color: #d52b1e; 
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+        }
 
-@keyframes fall {
-    to {
-        transform: translateY(100vh) rotate(360deg);
-        opacity: 0;
-    }
-}
-
-@media (max-width: 500px) {
-    .game-container {
-        padding: 15px 10px 20px;
-    }
-    .stats-panel {
-        margin: 10px 0;
-        justify-content: center;
-    }
-    .card {
-        font-size: 2.4rem;
-    }
-    #game {
-        gap: 10px;
-    }
-    .stat-item {
-        padding: 4px 12px;
-        font-size: 1rem;
-    }
-}
-
-@media (max-width: 400px) {
-    #game {
-        grid-template-columns: repeat(4, minmax(65px, 85px));
-        gap: 8px;
-    }
-    .card {
-        font-size: 2rem;
-    }
-}
-</style>
+        .btn:hover {
+            background-color: #b32015;
+            transform: scale(1.05);
+        }
+    </style>
 </head>
 <body>
-<div class="game-container">
-    <h1>
-        🇧🇴 Messias Game 💙
-        <span>Memória Andina</span>
-    </h1>
 
-    <div class="stats-panel">
-        <div class="stat-item">
-            <span>🎯</span>
-            <span id="attempts-value">0</span>
-        </div>
-        <div class="stat-item">
-            <span>✅</span>
-            <span id="matches-value">0</span>
-            <span>/4</span>
-        </div>
-        <div class="stat-item" id="message-area">
-            ✨ Encontre os pares!
+    <header>
+        <h1>MESSIAS GAME: MODO IMPREVISÍVEL</h1>
+    </header>
+
+    <div class="status-container">
+        <div class="status-box">Nível: <span id="level-display">1</span>/10</div>
+        <div class="status-box">Tempo: <span id="timer-display">60</span>s</div>
+        <div class="status-box">Pontos: <span id="score-display">1000</span></div>
+    </div>
+
+    <div class="mascot-container">
+        <div class="mascot-avatar">🦙</div>
+        <div class="mascot-bubble" id="tito-speech">
+            Aumentei seu tempo porque fiquei com pena dos seus dedos lentos. Mas ó: errou um par, eu devoro 3 segundos do seu relógio! Boa sorte.
         </div>
     </div>
 
-    <div id="game"></div>
+    <main class="game-container" id="board"></main>
 
-    <button id="reset-btn" aria-label="Novo Jogo">
-        🔄 Novo Jogo
-    </button>
-</div>
+    <button class="btn" onclick="resetEntireGame()">Desistir de Vez</button>
 
-<script>
-// ---------- TEMAS E ÍCONES BOLIVIANOS (mais diverso e educativo) ----------
-const THEMES = {
-    classic: ["🇧🇴","🇧🇴","🦙","🦙","⛰️","⛰️","☀️","☀️"],
-    animals: ["🦙","🦙","🐆","🐆","🦜","🦜","🐻","🐻"],
-    nature: ["🌋","🌋","🏔️","🏔️","🌵","🌵","💧","💧"],
-    culture: ["🪈","🪈","🎭","🎭","🧣","🧣","🏺","🏺"]
-};
+    <script>
+        const poolItems = [
+            { icon: "🦙", name: "Lhama" },
+            { icon: "🏔️", name: "Salar Uyuni" },
+            { icon: "🥟", name: "Salteña" },
+            { icon: "⛵", name: "Titicaca" },
+            { icon: "👒", name: "Cholita" },
+            { icon: "🎷", name: "Zampoña" },
+            { icon: "🐆", name: "Beni Jaguar" },
+            { icon: "🏳️‍🌈", name: "Wiphala" },
+            { icon: "🥖", name: "Marraqueta" },
+            { icon: "⛏️", name: "Potosí" }
+        ];
 
-// Emoji descritivo para o tema atual (modo dinâmico)
-let currentThemeName = "classic";
-let currentCardsSet = [...THEMES.classic];
+        const titoInsults = [
+            "PATÉTICO! Errou e ainda perdeu 3 segundos no relógio! Olha o desespero!",
+            "Errou de novo. Além de perder pontos, tá ficando sem tempo. Anda rápido!",
+            "Eita jogada feia! Só de olhar para esse erro eu tirei tempo do seu cronômetro por puro capricho.",
+            "Tão lento que o tempo tá evaporando igual a água no Salar de Uyuni.",
+            "Você é a prova viva de que clicar rápido não significa clicar certo. Menos 3 segundos para você aprender!"
+        ];
 
-// Variáveis do jogo
-let cardsElements = [];
-let firstCard = null;
-let secondCard = null;
-let lockBoard = false;
-let attempts = 0;
-let matchedPairs = 0;
-let totalPairs = 4;
+        const titoWinLevel = [
+            "Passou... Que milagre. Mas no próximo nível o tempo inicial é menor e meus roubos de segundos continuam ativos!",
+            "Avançou de nível, mas sua pontuação continua uma piada de mau gosto.",
+            "Uau, o gênio achou os pares. Vamos ver se você é rápido o bastante agora."
+        ];
 
-const gameContainer = document.getElementById("game");
-const attemptsSpan = document.getElementById("attempts-value");
-const matchesSpan = document.getElementById("matches-value");
-const messageDiv = document.getElementById("message-area");
-const resetBtn = document.getElementById("reset-btn");
+        // NOVO AJUSTE DE TEMPO: Mais justo no início, mas pune erros severamente
+        const levelConfig = {
+            1:  { pairs: 8,  cols: 4, time: 60 }, // 60 segundos iniciais para respirar
+            2:  { pairs: 8,  cols: 4, time: 52 },
+            3:  { pairs: 8,  cols: 4, time: 45 },
+            4:  { pairs: 9,  cols: 6, time: 45 }, // Tabuleiro expande
+            5:  { pairs: 9,  cols: 6, time: 40 },
+            6:  { pairs: 9,  cols: 6, time: 35 },
+            7:  { pairs: 10, cols: 5, time: 35 }, // Tabuleiro máximo
+            8:  { pairs: 10, cols: 5, time: 30 },
+            9:  { pairs: 10, cols: 5, time: 27 },
+            10: { pairs: 10, cols: 5, time: 25 } // 25 segundos + roubos de tempo = Puro suco do caos
+        };
 
-// Timer opcional e animações
-let timeoutId = null;
+        let currentLevel = 1;
+        let score = 1000;
+        let timeLeft;
+        let timerInterval;
+        
+        let cardData = [];
+        let firstCard, secondCard;
+        let hasFlippedCard = false;
+        let lockBoard = false;
+        let matchesFound = 0;
 
-// ----- Utilitários: Aleatório e confetes melhorados -----
-function shuffleArray(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-}
-
-// Confetti moderno e leve
-function createConfetti() {
-    const colors = ['#FFD966', '#58b368', '#FFB347', '#E34234', '#2c7ab1', '#FFE484', '#F4A261'];
-    for (let i = 0; i < 100; i++) {
-        const conf = document.createElement('div');
-        conf.classList.add('confetti');
-        conf.style.left = Math.random() * 100 + '%';
-        conf.style.width = conf.style.height = Math.floor(5 + Math.random() * 12) + 'px';
-        conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        conf.style.position = 'fixed';
-        conf.style.top = '-20px';
-        conf.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-        conf.style.opacity = 0.6 + Math.random() * 0.5;
-        conf.style.transform = `rotate(${Math.random() * 360}deg)`;
-        conf.style.animation = `fall ${1.2 + Math.random() * 1.5}s linear forwards`;
-        document.body.appendChild(conf);
-        setTimeout(() => conf.remove(), 2500);
-    }
-}
-
-function showVictoryMessage(attemptCount) {
-    let victoryText = '';
-    if (attemptCount <= 6) victoryText = '🌟 PERFEITO! Memória lendária! 🌟';
-    else if (attemptCount <= 12) victoryText = '🎉 Excelente! Você arrasou! 🎉';
-    else victoryText = '🏆 Parabéns! Você venceu! Continue treinando! 🏆';
-    
-    messageDiv.innerHTML = `🎊 ${victoryText} 🎊`;
-    messageDiv.style.background = "#FFE484";
-    messageDiv.style.transform = "scale(1.02)";
-    createConfetti();
-    
-    // Animação extra especial: piscar estrelas
-    setTimeout(() => {
-        if (matchedPairs === totalPairs) {
-            messageDiv.innerHTML = "✨ Jogo completo! Inicie um novo! ✨";
+        function playErrorSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(130, ctx.currentTime);
+                
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                osc.start();
+                osc.stop(ctx.currentTime + 0.4);
+            } catch(e) { console.log("Áudio não suportado"); }
         }
-    }, 2000);
-}
 
-// Atualizar UI de status
-function updateStatsUI() {
-    attemptsSpan.textContent = attempts;
-    matchesSpan.textContent = matchedPairs;
-}
+        const board = document.getElementById('board');
+        const levelText = document.getElementById('level-display');
+        const timerText = document.getElementById('timer-display');
+        const scoreText = document.getElementById('score-display');
+        const titoSpeech = document.getElementById('tito-speech');
 
-// Reinicia o tabuleiro sem travas
-function resetBoardState() {
-    if (timeoutId) clearTimeout(timeoutId);
-    firstCard = null;
-    secondCard = null;
-    lockBoard = false;
-}
-
-function resetGame() {
-    // Limpa qualquer timeout pendente
-    if (timeoutId) {
-        clearTimeout(timeoutId);
-        timeoutId = null;
-    }
-    resetBoardState();
-    
-    // Reseta variáveis de jogo
-    attempts = 0;
-    matchedPairs = 0;
-    updateStatsUI();
-    
-    // Mensagem motivacional aleatória
-    const startMessages = [
-        "💪 Combine os símbolos!", 
-        "🧠 Treine sua memória!",
-        "🇧🇴 Descubra os pares",
-        "✨ Foco e diversão!"
-    ];
-    messageDiv.innerHTML = startMessages[Math.floor(Math.random() * startMessages.length)];
-    messageDiv.style.background = "#FFE484";
-    
-    // Embaralha as cartas conforme tema atual
-    const shuffledDeck = shuffleArray([...currentCardsSet]);
-    
-    // Recria o DOM das cartas do zero
-    gameContainer.innerHTML = "";
-    cardsElements = [];
-    
-    shuffledDeck.forEach((symbol, idx) => {
-        const card = document.createElement("div");
-        card.className = "card hidden";
-        card.textContent = symbol;
-        card.dataset.symbol = symbol;
-        card.dataset.index = idx;
-        card.addEventListener("click", () => onCardClick(card));
-        gameContainer.appendChild(card);
-        cardsElements.push(card);
-    });
-}
-
-// Função principal de clique (otimizada)
-function onCardClick(card) {
-    // Bloqueio total, ou carta já combinada, ou carta já virada e esperando, ou mesma carta
-    if (lockBoard) return;
-    if (card.classList.contains("matched")) return;
-    
-    // Se a carta já está descoberta (não hidden) e é a mesma que firstCard, ignora
-    if (!card.classList.contains("hidden") && card === firstCard) return;
-    
-    // Se existe um segundo cartão aguardando e clicou em outra inválida?
-    if (secondCard !== null) return;
-    
-    // Revelar carta
-    card.classList.remove("hidden");
-    
-    // Lógica do primeiro cartão
-    if (firstCard === null) {
-        firstCard = card;
-        return;
-    }
-    
-    // Agora temos o segundo cartão
-    secondCard = card;
-    attempts++;
-    updateStatsUI();
-    
-    // Verifica correspondência
-    const isMatch = (firstCard.dataset.symbol === secondCard.dataset.symbol);
-    
-    if (isMatch) {
-        // Par combinado!
-        firstCard.classList.add("matched");
-        secondCard.classList.add("matched");
-        firstCard.classList.remove("hidden");
-        secondCard.classList.remove("hidden");
-        
-        matchedPairs++;
-        matchesSpan.textContent = matchedPairs;
-        
-        // Feedback visual especial
-        messageDiv.innerHTML = "🎉 Par encontrado! 🎉";
-        messageDiv.style.background = "#A3E4A3";
-        setTimeout(() => {
-            if (matchedPairs !== totalPairs) {
-                messageDiv.innerHTML = "✨ Continue assim! ✨";
-                messageDiv.style.background = "#FFE484";
-            }
-        }, 800);
-        
-        // Checar vitória
-        if (matchedPairs === totalPairs) {
-            showVictoryMessage(attempts);
-            lockBoard = true; // Trava o tabuleiro após vitória para evitar cliques extras
-        }
-        
-        // Limpar first e second
-        resetBoardState();
-    } else {
-        // Erro: esconder as duas após delay
-        messageDiv.innerHTML = "❌ Não foi dessa vez! ❌";
-        messageDiv.style.background = "#F7C5C5";
-        lockBoard = true;
-        
-        timeoutId = setTimeout(() => {
-            // Garantir que ainda não foram combinadas (evita bugs)
-            if (firstCard && !firstCard.classList.contains("matched")) {
-                firstCard.classList.add("hidden");
-            }
-            if (secondCard && !secondCard.classList.contains("matched")) {
-                secondCard.classList.add("hidden");
-            }
-            resetBoardState();
-            if (timeoutId) timeoutId = null;
+        function startLevel() {
+            clearInterval(timerInterval);
+            const config = levelConfig[currentLevel];
             
-            // Restaura mensagem se não houver vitória
-            if (matchedPairs !== totalPairs) {
-                messageDiv.innerHTML = "💪 Tente novamente!";
-                messageDiv.style.background = "#FFE484";
-            } else if (matchedPairs === totalPairs) {
-                // Se já ganhou não mudar mensagem de vitória
-            } else {
-                messageDiv.innerHTML = "🔍 Encontre os pares!";
-                messageDiv.style.background = "#FFE484";
-            }
-        }, 800);
-    }
-}
+            levelText.textContent = currentLevel;
+            timeLeft = config.time;
+            timerText.textContent = timeLeft;
+            matchesFound = 0;
+            resetTurn();
 
-// Função para trocar de tema (recurso extra que agrega valor e replayability)
-function cycleTheme() {
-    const themeNames = Object.keys(THEMES);
-    let currentIdx = themeNames.indexOf(currentThemeName);
-    let nextIdx = (currentIdx + 1) % themeNames.length;
-    currentThemeName = themeNames[nextIdx];
-    currentCardsSet = [...THEMES[currentThemeName]];
-    
-    // Atualiza título secundário com tema
-    let themeDisplay = "";
-    if (currentThemeName === 'classic') themeDisplay = "🇧🇴 Clássico Bolívia";
-    else if (currentThemeName === 'animals') themeDisplay = "🦙 Animais da Montanha";
-    else if (currentThemeName === 'nature') themeDisplay = "🌋 Natureza Andina";
-    else themeDisplay = "🎭 Cultura Viva";
-    
-    messageDiv.innerHTML = `🎨 Tema: ${themeDisplay}`;
-    messageDiv.style.background = "#C5E0FF";
-    setTimeout(() => {
-        if (matchedPairs !== totalPairs) 
-            messageDiv.innerHTML = "🔁 Novo tema! Vamos jogar!";
-        else 
-            messageDiv.innerHTML = "🏆 Mude o tema e jogue novamente!";
-        setTimeout(() => {
-            if (matchedPairs !== totalPairs && messageDiv.innerHTML !== "🎉 Par encontrado! 🎉")
-                messageDiv.innerHTML = "🧠 Memorize os pares!";
-        }, 1500);
-    }, 1800);
-    
-    resetGame(); // Recria o jogo com novo tema
-}
+            board.style.gridTemplateColumns = `repeat(${config.cols}, 1fr)`;
 
-// Adicionar botão de tema de forma elegante (melhor experiência)
-function addThemeButton() {
-    const btnContainer = document.createElement("div");
-    btnContainer.style.marginTop = "12px";
-    const themeBtn = document.createElement("button");
-    themeBtn.innerHTML = "🎨 Trocar Tema";
-    themeBtn.style.background = "#ffc107";
-    themeBtn.style.boxShadow = "0 6px 0 #b47c2e";
-    themeBtn.style.fontSize = "0.95rem";
-    themeBtn.style.padding = "8px 20px";
-    themeBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        if (lockBoard && matchedPairs !== totalPairs) {
-            messageDiv.innerHTML = "⚠️ Espere a jogada terminar!";
-            setTimeout(() => {
-                if (matchedPairs !== totalPairs)
-                    messageDiv.innerHTML = "🧠 Continue jogando!";
+            let selectedItems = poolItems.slice(0, config.pairs);
+            cardData = [...selectedItems, ...selectedItems];
+            
+            shuffle();
+            renderBoard();
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerText.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    gameOverTimeOut();
+                }
             }, 1000);
-            return;
         }
-        if (matchedPairs === totalPairs || confirm("Deseja trocar de tema? O jogo atual será reiniciado.")) {
-            cycleTheme();
+
+        function shuffle() {
+            for (let i = cardData.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cardData[i], cardData[j]] = [cardData[j], cardData[i]];
+            }
         }
-    });
-    btnContainer.appendChild(themeBtn);
-    resetBtn.parentNode.insertBefore(btnContainer, resetBtn.nextSibling);
-}
 
-// Prevenir múltiplos eventos de reset e melhorar performance
-resetBtn.addEventListener("click", () => {
-    if (timeoutId) clearTimeout(timeoutId);
-    lockBoard = false; // força desbloqueio
-    resetGame();
-    messageDiv.innerHTML = "🔄 Novo jogo! Boa sorte!";
-    messageDiv.style.background = "#FFE484";
-    setTimeout(() => {
-        if (matchedPairs !== totalPairs && messageDiv.innerHTML.includes("Novo jogo"))
-            messageDiv.innerHTML = "🔍 Encontre os pares!";
-    }, 1500);
-});
+        function renderBoard() {
+            board.innerHTML = "";
+            cardData.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.name = item.name;
+                card.innerHTML = `
+                    <div class="card-front">
+                        <div class="card-icon">${item.icon}</div>
+                        <div class="card-name">${item.name}</div>
+                    </div>
+                    <div class="card-back"></div>
+                `;
+                card.addEventListener('click', flipCard);
+                board.appendChild(card);
+            });
+        }
 
-// Inicialização com tema padrão
-function init() {
-    currentCardsSet = [...THEMES.classic];
-    currentThemeName = "classic";
-    resetGame();
-    addThemeButton();
-}
+        function flipCard() {
+            if (lockBoard) return;
+            if (this === firstCard) return;
 
-init();
+            this.classList.add('flipped');
 
-// Ajuste para garantir que ao terminar o jogo novas jogadas fiquem travadas até resetar
-// (Já tratamos lockBoard na vitória)
-// E também não permitir cliques após vitória sem reset, com lockBoard = true.
-// Reset reseta lockBoard e tudo.
-</script>
+            if (!hasFlippedCard) {
+                hasFlippedCard = true;
+                firstCard = this;
+                return;
+            }
+
+            secondCard = this;
+            checkMatch();
+        }
+
+        function checkMatch() {
+            const isMatch = firstCard.dataset.name === secondCard.dataset.name;
+            if (isMatch) {
+                score += 100;
+                matchesFound++;
+                scoreText.textContent = score;
+                disableCards();
+                
+                if (matchesFound === levelConfig[currentLevel].pairs) {
+                    nextLevel();
+                }
+            } else {
+                score -= 100;
+                scoreText.textContent = score;
+                lockBoard = true;
+                
+                // --- A NOVA REGRINHA DO TITIO TITO ---
+                // Retira 3 segundos do tempo restante imediatamente se o tempo for maior que 3
+                timeLeft = Math.max(0, timeLeft - 3); 
+                timerText.textContent = timeLeft;
+                
+                // Pisca o painel de tempo em vermelho vivo ao perder segundos
+                timerText.style.color = '#ffffff';
+                setTimeout(() => { timerText.style.color = '#d52b1e'; }, 200);
+                
+                playErrorSound();
+                titoSpeech.textContent = titoInsults[Math.floor(Math.random() * titoInsults.length)];
+                
+                setTimeout(() => {
+                    firstCard.classList.remove('flipped');
+                    secondCard.classList.remove('flipped');
+                    resetTurn();
+                }, 1800); 
+            }
+        }
+
+        function disableCards() {
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+            resetTurn();
+        }
+
+        function resetTurn() {
+            [hasFlippedCard, lockBoard] = [false, false];
+            [firstCard, secondCard] = [null, null];
+        }
+
+        function nextLevel() {
+            clearInterval(timerInterval);
+            if (currentLevel < 10) {
+                currentLevel++;
+                titoSpeech.textContent = titoWinLevel[Math.floor(Math.random() * titoWinLevel.length)];
+                setTimeout(startLevel, 1200);
+            } else {
+                titoSpeech.innerHTML = `🚨 <b>NÃO PODE SER...</b> Você é rápido de verdade. Passou do nível 10 e lidou com o roubo de tempo terminando com <b>${score} pontos</b>. Desligo meu motor de injúrias aqui.`;
+                board.innerHTML = "<h2 style='grid-column: 1/-1; text-align:center; color:#007934;'>👑 VOCÊ COMPLETOU O SUPREMO MESSIAS GAME!</h2>";
+            }
+        }
+
+        function gameOverTimeOut() {
+            clearInterval(timerInterval);
+            score = 0;
+            currentLevel = 1;
+            scoreText.textContent = score;
+            titoSpeech.innerHTML = "💥 <b>O TEMPO EVAPOROU!</b> Muito erro e pouca precisão. Volte pro nível 1 para eu ver se você aprende a clicar direito!";
+            startLevel();
+        }
+
+        function resetEntireGame() {
+            currentLevel = 1;
+            score = 1000;
+            scoreText.textContent = score;
+            titoSpeech.textContent = "Apertou o botão de pânico? Sabia. De volta ao início.";
+            startLevel();
+        }
+
+        startLevel();
+    </script>
 </body>
 </html>
